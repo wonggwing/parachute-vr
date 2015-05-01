@@ -15,13 +15,28 @@ class Room {
 		this.webSocket.onmessage = this.onMessage;
 	}
 
-	public onOpen(event : Event) : void {
+	private onOpen = (event : Event) => {
 		console.log("Connected to " + this.address);
 
-	}
+		this.send({
+			"command" : "join",
+			"value" : {
+				"name" : localStorage.getItem("name") || "Player",
+				"ready" : 0
+			}
+		});
+	};
 
-	public onMessage(event : MessageEvent) {
+	private onMessage = (event : MessageEvent) => {
+		var json = JSON.parse(event.data);
 
+		if (json.command == "list") {
+			$("#player-list").html(json.value);
+		}
+	};
+
+	public send(obj) : void {
+		this.webSocket.send(JSON.stringify(obj));
 	}
 
 }

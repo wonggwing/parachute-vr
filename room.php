@@ -10,6 +10,21 @@ define("VERSION", rand(0,99999999));
 </head>
 <body>
 
+<table>
+	<thead>
+	<tr>
+		<th></th>
+		<th>Name</th>
+		<th>Ready?</th>
+	</tr>
+	</thead>
+	<tfoot>
+
+	</tfoot>
+	<tbody id="player-list">
+
+	</tbody>
+</table>
 
 
 <script src="js/jquery-2.1.3.min.js"></script>
