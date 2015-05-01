@@ -8,6 +8,7 @@ class Room implements MessageComponentInterface {
 	private $players;
 
 	public function onOpen(ConnectionInterface $conn) {
+		echo  "Joined\n";
 
 	}
 

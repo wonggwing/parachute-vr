@@ -5,14 +5,14 @@ define("VERSION", rand(0,99999999));
 <html lang="en">
 <head>
 	<title>Parachute VR</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<meta charset='utf-8'>
 	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 </head>
 <body>
 
 <ul>
-	<li><a href="game.php?mode=time">Time Attack</a></li>
-	<li><a href="game.php?mode=coins">Coin collecting</a></li>
+	<li><a href="room.php?mode=time">Time Attack</a></li>
+	<li><a href="room.php?mode=coins">Coin collecting</a></li>
 	<li>Enable/Disable Stereo</li>
 </ul>
 
