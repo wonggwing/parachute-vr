@@ -9,7 +9,6 @@ define("VERSION", rand(0,99999999));
 	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 </head>
 <body>
-
 <ul>
 	<li><a href="room.php?mode=time">Time Attack</a></li>
 	<li><a href="room.php?mode=coins">Coin collecting</a></li>
