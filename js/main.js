@@ -1,7 +1,6 @@
 /**
  * Created by Louis Lam on 3/10/2015.
  */
-
 var camera, scene, renderer;
 var effect, controls;
 var element, container;

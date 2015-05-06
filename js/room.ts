@@ -3,6 +3,7 @@ class Room {
 
 	private address : string;
 	private webSocket : WebSocket;
+	private ready : boolean = false;
 
 	constructor() {
 		this.address = localStorage.getItem("address") || "panel.louislam.net:8324";
@@ -19,8 +20,7 @@ class Room {
 		console.log("Connected to " + this.address);
 
 		this.send({
-			"command" : "join",
-			"value" : {
+			"join" : {
 				"name" : localStorage.getItem("name") || "Player",
 				"ready" : 0
 			}
@@ -36,9 +36,26 @@ class Room {
 	};
 
 	public send(obj) : void {
-		this.webSocket.send(JSON.stringify(obj));
+		var str = JSON.stringify(obj);
+		console.log(str);
+		this.webSocket.send(str);
 	}
 
+	public toggleReady() : void {
+		this.ready = !this.ready;
+		this.send({
+			"ready" : this.ready
+		});
+
+	}
+
+	public closeAll() : void {
+		this.send({"close" : null});
+	}
+
+	public close() : void {
+		$("body").html("This room has been closed.");
+	}
 }
 
 var room = new Room();

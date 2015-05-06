@@ -1,11 +1,11 @@
 var Room = (function () {
     function Room() {
         var _this = this;
+        this.ready = false;
         this.onOpen = function (event) {
             console.log("Connected to " + _this.address);
             _this.send({
-                "command": "join",
-                "value": {
+                "join": {
                     "name": localStorage.getItem("name") || "Player",
                     "ready": 0
                 }
@@ -26,7 +26,21 @@ var Room = (function () {
         this.webSocket.onmessage = this.onMessage;
     };
     Room.prototype.send = function (obj) {
-        this.webSocket.send(JSON.stringify(obj));
+        var str = JSON.stringify(obj);
+        console.log(str);
+        this.webSocket.send(str);
+    };
+    Room.prototype.toggleReady = function () {
+        this.ready = !this.ready;
+        this.send({
+            "ready": this.ready
+        });
+    };
+    Room.prototype.closeAll = function () {
+        this.send({ "close": null });
+    };
+    Room.prototype.close = function () {
+        $("body").html("This room has been closed.");
     };
     return Room;
 })();
