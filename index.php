@@ -32,7 +32,12 @@ define("VERSION", rand(0,99999999));
         .button{
             margin: 5px;
         }
+
+        .alt{
+            background: whitesmoke !important;
+        }
     </style>
+    <script src="js/leah.js"></script>
 </head>
 <body class="landing">
 
@@ -70,7 +75,7 @@ define("VERSION", rand(0,99999999));
         <li class="12u$(medium)"><a href="room.php?mode=coins" class="button big icon fa-rocket">Coin Collecting</a></li>
 
 
-        <li class="12u$(medium)"><a href="#" class="button big icon fa-male">Enable/Disable Stereo</a></li>
+        <li class="12u$(medium)"><a href="javascript: stereo()" id="stereo_btn" class="button big icon fa-male">Enable/Disable Stereo</a></li>
 
 
     </ul>
@@ -107,11 +112,11 @@ define("VERSION", rand(0,99999999));
 </section>
 
 <!-- One -->
-<section id="one" class="wrapper style1 special">
+<!--<section id="one" class="wrapper style1 special">
     <div class="container">
         <header class="major">
             <h2>Features</h2>
-            <!--<p>Lorem ipsum dolor sit amet, delectus consequatur, similique quia!</p>-->
+
         </header>
         <div class="row 150%">
             <div class="4u 12u$(medium)">
@@ -137,7 +142,7 @@ define("VERSION", rand(0,99999999));
             </div>
         </div>
     </div>
-</section>
+</section>-->
 
 <!-- Two -->
 <section id="two" class="wrapper style2 special">
