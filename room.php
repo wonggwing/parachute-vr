@@ -21,6 +21,13 @@ define("VERSION", rand(0,99999999));
 			right: 0;
 			bottom: 0;
 		}
+
+		#state {
+			position: absolute;
+			top: 0;
+			left: 0;
+			z-index: 10;
+		}
 	</style>
 </head>
 <body>
@@ -47,6 +54,11 @@ define("VERSION", rand(0,99999999));
 		<li><a href="javascript:room.send({'start' : ''})">Start</a></li>
 		<li><a href="javascript:room.send({'close' : ''})">Close Room</a></li>
 	</ul>
+
+	<div id="state">
+		<div>Height: <span id="height">30000</span>m</div>
+		<div>Coins: <span id="coin">0</span></div>
+	</div>
 </div>
 
 <div id="example" style="display:none"></div>
@@ -62,6 +74,7 @@ define("VERSION", rand(0,99999999));
 <script src="js/third-party/threejs/StereoEffect.js"></script>
 <script src="js/third-party/threejs/DeviceOrientationControls.js"></script>
 <script src="js/third-party/threejs/OrbitControls.js"></script>
+<script src="js/third-party/threejs/threex.keyboardstate.js"></script>
 <script src="js/main.js?v=<?=VERSION ?>"></script>
 
 

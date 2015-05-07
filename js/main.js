@@ -10,11 +10,17 @@ var effect;
 var controls;
 var element, container;
 var clock = new THREE.Clock();
-
 var isStereo = false;
-
 var player1 = null;
-var object1 = null;
+var loader = new THREE.OBJLoader;
+var keyboard = new THREEx.KeyboardState();
+
+var coin;
+
+/*
+Jquery elements
+ */
+var heightJQuery = null;
 
 init();
 
@@ -24,12 +30,14 @@ var ready = function () {
 };
 
 function init() {
+	heightJQuery = $("#height");
 
 	if (localStorage.getItem("stereo") == "true") {
 		isStereo = true;
 	} else {
 		isStereo = false;
 	}
+
 
 	renderer = new THREE.WebGLRenderer();
 	element = renderer.domElement;
@@ -50,11 +58,12 @@ function init() {
 var onSceneLoaded = function () {
 
 	camera = scene.getObjectByName("PerspectiveCamera 1", true);
-
 	player1 = scene.getObjectByName("player", true);
-	object1 = scene.getObjectByName("TorusKnot 4", true);
+	coin = scene.getObjectByName("coin", true)
 
-
+	var newQueen = coin.clone();
+	newQueen.position.y -= 1000;
+	scene.add(newQueen);
 
 	controls = new THREE.OrbitControls(camera, element);
 	controls.rotateUp(Math.PI / 4);
@@ -65,6 +74,8 @@ var onSceneLoaded = function () {
 	);
 	controls.noZoom = true;
 	controls.noPan = true;
+
+	camera.rotation.z += 3;
 
 
 	function setOrientationControls(e) {
@@ -96,17 +107,38 @@ function animate() {
 	}
 
 	if (player1 != null) {
-		if (player1.position.y > 0)
-			player1.position.y = player1.position.y - 6;
-		else {
-			player1.position.y = 8000;
-			console.log(player1.position.y);
+		if (player1.position.y > 0) {
+			var t = clock.getDelta();
+
+			player1.position.y = player1.position.y - 3;
+
+
+		} else {
+			player1.position.y = 30000;
 		}
 	}
 
-	if (object1 != null) {
-		object1.position.y += 0.1;
+	if (keyboard.pressed("W")) {
+		player1.position.z += 3;
 	}
+
+	if (keyboard.pressed("A")) {
+		player1.position.x += 3;
+	}
+
+	if (keyboard.pressed("S")) {
+		player1.position.z -= 3;
+	}
+
+	if (keyboard.pressed("D")) {
+		player1.position.x -= 3;
+	}
+
+
+	coin.rotation.z = coin.rotation.z + 0.1;
+
+
+	heightJQuery.html(Math.round(player1.position.y));
 
 
 	if (isStereo) {
