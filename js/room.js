@@ -12,9 +12,16 @@ var Room = (function () {
             });
         };
         this.onMessage = function (event) {
+            console.log(event.data);
             var json = JSON.parse(event.data);
-            if (json.command == "list") {
-                $("#player-list").html(json.value);
+            for (var cmd in json) {
+                if (cmd == "list") {
+                    $("#player-list").html(json[cmd]);
+                }
+                else if (cmd == "start") {
+                    _this.start();
+                    console.log("123");
+                }
             }
         };
         this.address = localStorage.getItem("address") || "panel.louislam.net:8324";
@@ -35,6 +42,9 @@ var Room = (function () {
         this.send({
             "ready": this.ready
         });
+    };
+    Room.prototype.start = function () {
+        $("#example").show();
     };
     Room.prototype.closeAll = function () {
         this.send({ "close": null });

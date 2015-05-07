@@ -28,10 +28,17 @@ class Room {
 	};
 
 	private onMessage = (event : MessageEvent) => {
+		console.log(event.data);
+
 		var json = JSON.parse(event.data);
 
-		if (json.command == "list") {
-			$("#player-list").html(json.value);
+		for (var cmd in json) {
+			if (cmd == "list") {
+				$("#player-list").html(json[cmd]);
+			} else if (cmd == "start") {
+				this.start();
+				console.log("123");
+			}
 		}
 	};
 
@@ -49,8 +56,12 @@ class Room {
 
 	}
 
+	private start() : void {
+		$("#example").show();
+	}
+
 	public closeAll() : void {
-		this.send({"close" : null});
+		this.send({"close" : null });
 	}
 
 	public close() : void {

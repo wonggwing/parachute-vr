@@ -2,9 +2,16 @@
  * Created by Louis Lam on 3/10/2015.
  */
 var camera, scene, renderer;
-var effect, controls;
+
+/**
+ * THREE.StereoEffect
+ */
+var effect;
+var controls;
 var element, container;
 var clock = new THREE.Clock();
+
+var isStereo = false;
 
 var player1 = null;
 var object1 = null;
@@ -17,6 +24,13 @@ var ready = function () {
 };
 
 function init() {
+
+	if (localStorage.getItem("stereo") == "true") {
+		isStereo = true;
+	} else {
+		isStereo = false;
+	}
+
 	renderer = new THREE.WebGLRenderer();
 	element = renderer.domElement;
 	container = document.getElementById('example');
@@ -25,53 +39,33 @@ function init() {
 	effect = new THREE.StereoEffect(renderer);
 
 	var loader = new THREE.ObjectLoader;
-	loader.load('json/scene.json?v=' + VERSION, function(obj) {
+
+	loader.load('json/scene.json?v=' + VERSION, function (obj) {
 		scene = obj;
-		console.log(scene);
 		onSceneLoaded();
-
 	});
-
-
 }
 
 
 var onSceneLoaded = function () {
-	camera = scene.getObjectByName( "PerspectiveCamera 1", true );
 
-	player1 = scene.getObjectByName( "player", true );
-	object1 = scene.getObjectByName( "TorusKnot 4", true );
+	camera = scene.getObjectByName("PerspectiveCamera 1", true);
 
-	//console.log(player1);
-	//scene.children.splice(7, 1);
+	player1 = scene.getObjectByName("player", true);
+	object1 = scene.getObjectByName("TorusKnot 4", true);
 
-	/*var loader = new THREE.OBJLoader;
 
-	loader.load('json/LeonKennedy/Leon_kennedy.obj', function(obj) {
-		player1= obj;
 
-		scene.add(player1);
-		player1.add(camera);
-
-		player1.position.x = 0;
-		player1.position.y = 2200;
-		player1.position.z = 220;
-
-		camera.lookAt(player1.position);
-
-		console.log(player1);
-		console.log(scene);
-	});*/
-
-	/*controls = new THREE.OrbitControls(camera, element);
-	//controls.rotateUp(Math.PI / 4);
+	controls = new THREE.OrbitControls(camera, element);
+	controls.rotateUp(Math.PI / 4);
 	controls.target.set(
-		camera.position.x,
+		camera.position.x + 0.1,
 		camera.position.y,
 		camera.position.z
 	);
 	controls.noZoom = true;
-	controls.noPan = true;*/
+	controls.noPan = true;
+
 
 	function setOrientationControls(e) {
 		if (!e.alpha) {
@@ -115,7 +109,11 @@ function animate() {
 	}
 
 
-	effect.render(scene, camera);
+	if (isStereo) {
+		effect.render(scene, camera);
+	} else {
+		renderer.render(scene, camera);
+	}
 }
 
 

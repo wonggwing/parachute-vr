@@ -17,42 +17,53 @@ class Room implements MessageComponentInterface {
 
 	public function onOpen(ConnectionInterface $conn) {
 		$this->players->attach($conn);
+		echo "Players: " .  $this->players->count() . "\n";
 	}
 
 	public function onMessage(ConnectionInterface $from, $msg) {
-		echo "Players: " .  $this->players->count() . "\n";
 		$json = json_decode($msg);
 
 		foreach ($json as $command => $value) {
+			echo "Command: $command\n";
 			if ($command == "join") {
-
 				$from->name = $value->name;
 				$from->ready = $value->ready;
 				$this->updateList();
-			} else if ($command == "ready") {
 
-				echo "$from->name set ready to $value\n";
+			} else if ($command == "ready") {
+				//echo "$from->name set ready to $value\n";
 				$from->ready = $value;
 				$this->updateList();
+
 			} else if ($command == "close") {
 				$this->sendToAll(array(
 					"close" => true
+				), $from, true);
+
+			} else if ($command == "start") {
+				$this->sendToAll(array(
+					"start" => true
 				), $from, true);
 			}
 
 		}
 	}
 
+	/**
+	 * @param array $obj
+	 * @param $sender
+	 * @param bool $includeMyself
+	 */
 	public function sendToAll($obj, $sender, $includeMyself = true) {
 		if ($includeMyself) {
+			foreach ($this->players as $player) {
+				$this->send($player, (object) $obj);
+			}
+		} else {
 			foreach ($this->players as $player) {
 				if ($player != $sender) {
 					$this->send($player, (object) $obj);
 				}
-			}
-		} else {
-			foreach ($this->players as $player) {
-				$this->send($player, (object) $obj);
 			}
 		}
 	}
@@ -78,8 +89,7 @@ class Room implements MessageComponentInterface {
 
 		foreach ($this->players as $player) {
 			$this->send($player, (object) array(
-				'command' => 'list',
-				'value' => $html
+				'list' => $html
 			));
 		}
 	}
