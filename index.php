@@ -93,10 +93,10 @@ define("VERSION", rand(0,99999999));
         <form action="#" method="post">
             <div class="row uniform">
                 <div class="6u 12u$(small)">
-                    <input name="name" id="name" value="" placeholder="Nickname" type="text">
+                    <input name="name" id="nickname" value="" placeholder="Nickname" type="text" onchange="save_info()">
                 </div>
                 <div class="6u$ 12u$(small)">
-                    <input name="server" id="server" value="panel.louislam.net:8324" placeholder="Server" type="text">
+                    <input name="server" id="server" value="panel.louislam.net:8324" placeholder="Server" type="text" onchange="save_info()">
                 </div>
                 <!--<div class="12u$">
                     <textarea name="message" id="message" placeholder="Message" rows="6"></textarea>

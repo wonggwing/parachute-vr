@@ -43,6 +43,16 @@ function stereo(){
 }
 
 
+function save_info(){
+
+    var nickname = $("#nickname").val();
+    var server = $("#server").val();
+
+    localStorage.setItem("nickname", nickname);
+    localStorage.setItem("server", server);
+}
+
+
 $( document ).ready(function() {
 
     var check = localStorage.getItem("stereo");
@@ -63,6 +73,20 @@ $( document ).ready(function() {
         disable();
     }
 
+    var nickname = localStorage.getItem("nickname");
+    var server = localStorage.getItem("server");
+
+    if(!nickname){
+        nickname = "";
+        server = "panel.louislam.net:8324";
+        localStorage.setItem("nickname", nickname);
+        localStorage.setItem("server", server);
+    }
+
+    $("#nickname").val(nickname);
+    $("#server").val(server);
 
 });
+
+
 
