@@ -6,7 +6,7 @@ define("VERSION", rand(0,99999999));
     <style>
         body {
             margin: 0;
-            overflow: hidden;
+            /*overflow: hidden;*/
         }
 
         #example {
