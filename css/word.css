@@ -1,0 +1,8 @@
+#big_word{
+    position: absolute;
+    top: 200px;
+    text-align: center;
+    font-size: 100px;
+    display: none;
+    color: red;
+}

@@ -53,7 +53,10 @@
 			}
 
 		</script>
+    <link href="css/word.css" rel="stylesheet"/>
+    <script src="js/word.js"></script>
 </head>
 <body class="landing">
 <section id="main" class="wrapper">
 <div class="container">
+    <h1 id="big_word">I'm on fire</h1>
