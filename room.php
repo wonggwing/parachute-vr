@@ -33,7 +33,6 @@ define("VERSION", rand(0,99999999));
 
         .horizon_ul li{
             display: inline;
-            
         }
 
         div.center{
