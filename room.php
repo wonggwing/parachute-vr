@@ -1,82 +1,102 @@
 <?
 define("VERSION", rand(0,99999999));
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<title>Parachute VR</title>
-	<meta charset='utf-8'>
-	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+<?php include('header.php'); ?>
 
-	<style>
-		body {
-			margin: 0;
-			overflow: hidden;
-		}
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
 
-		#example {
-			position: absolute;
-			top: 0;
-			left: 0;
-			right: 0;
-			bottom: 0;
-		}
+        #example {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
 
-		#state {
-			position: absolute;
-			top: 0;
-			left: 0;
-			z-index: 10;
-		}
-	</style>
-</head>
-<body>
+        #state {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 10;
+            margin: 30px;
+        }
 
-<div id="room">
-	<table>
-		<thead>
-		<tr>
-			<th></th>
-			<th>Name</th>
-			<th>Ready?</th>
-		</tr>
-		</thead>
-		<tfoot>
+        .horizon_ul{
+            margin: 0;
+            padding: 0;
+            list-style-type: none;
+        }
 
-		</tfoot>
-		<tbody id="player-list">
+        .horizon_ul li{
+            display: inline;
+            
+        }
 
-		</tbody>
-	</table>
+        div.center{
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
 
-	<ul>
-		<li><a href="javascript:room.toggleReady();">Ready</a></li>
-		<li><a href="javascript:room.send({'start' : ''})">Start</a></li>
-		<li><a href="javascript:room.send({'close' : ''})">Close Room</a></li>
-	</ul>
+    <div id="room">
+        <section>
+            <br/><br/><br/><br/><br/>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th>Name</th>
+                        <th>Ready?</th>
+                    </tr>
+                    </thead>
+                    <tfoot>
 
-	<div id="state">
-		<div>Height: <span id="height">30000</span>m</div>
-		<div>Coins: <span id="coin">0</span></div>
-	</div>
-</div>
+                    </tfoot>
+                    <tbody id="player-list">
 
-<div id="example" style="display:none"></div>
+                    </tbody>
+                </table>
+            </div>
+            <br/>
+        </section>
+        <section>
+            <div class="row">
 
-<script>
-	var VERSION = <?=VERSION ?>;
-</script>
-<script src="js/jquery-2.1.3.min.js"></script>
-<script src="js/room.js?v=<?=VERSION ?>"></script>
+                <ul class="horizon_ul">
+                    <li class="4u$ 12u$(small)"><a class="button icon fa-plane" href="javascript:room.toggleReady();">Ready</a></li>
+                    <li class="4u$ 12u$(small)"><a class="button icon fa-child" href="javascript:room.send({'start' : ''})">Start</a></li>
+                    <li class="4u$ 12u$(small)"><a class="button icon fa-close" href="javascript:room.send({'close' : ''})">Close Room</a></li>
+                </ul>
+            </div>
+        </section>
+        <section>
+            <div id="state">
+                <h4><i class="icon small rounded color1 fa-cloud">&nbsp;</i> Height: <span id="height">30000</span>m</h4>
+                <h4><i class="icon small rounded color9 fa-money">&nbsp;</i> Coins: <span id="coin">0</span></h4>
+            </div>
+        </section>
+    </div>
 
-<script src="js/third-party/threejs/three.min.js"></script>
-<script src="js/third-party/threejs/OBJLoader.js"></script>
-<script src="js/third-party/threejs/StereoEffect.js"></script>
-<script src="js/third-party/threejs/DeviceOrientationControls.js"></script>
-<script src="js/third-party/threejs/OrbitControls.js"></script>
-<script src="js/third-party/threejs/threex.keyboardstate.js"></script>
-<script src="js/main.js?v=<?=VERSION ?>"></script>
+    <div id="example" style="display:none"></div>
+
+    <script>
+        var VERSION = <?=VERSION ?>;
+    </script>
+    <script src="js/jquery-2.1.3.min.js"></script>
+    <script src="js/room.js?v=<?=VERSION ?>"></script>
+
+    <script src="js/third-party/threejs/three.min.js"></script>
+    <script src="js/third-party/threejs/OBJLoader.js"></script>
+    <script src="js/third-party/threejs/StereoEffect.js"></script>
+    <script src="js/third-party/threejs/DeviceOrientationControls.js"></script>
+    <script src="js/third-party/threejs/OrbitControls.js"></script>
+    <script src="js/third-party/threejs/threex.keyboardstate.js"></script>
+    <script src="js/main.js?v=<?=VERSION ?>"></script>
 
 
-</body>
-</html>
+<?php include('footer.php'); ?>
