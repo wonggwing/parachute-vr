@@ -6,7 +6,7 @@ var Room = (function () {
             console.log("Connected to " + _this.address);
             _this.send({
                 "join": {
-                    "name": localStorage.getItem("name") || "Player",
+                    "name": localStorage.getItem("nickname") || "Player",
                     "ready": 0
                 }
             });
@@ -24,7 +24,7 @@ var Room = (function () {
                 }
             }
         };
-        this.address = localStorage.getItem("address") || "panel.louislam.net:8324";
+        this.address = localStorage.getItem("server") || "panel.louislam.net:8324";
     }
     Room.prototype.run = function () {
         console.log("Connecting to " + this.address);

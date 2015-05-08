@@ -75,21 +75,36 @@ var onSceneLoaded = function () {
 	controls.noZoom = true;
 	controls.noPan = true;
 
-	camera.rotation.z += 3;
+	camera.position.x =0.10137612238819838;
+	camera.position.y =75.14169873396278;
+	camera.position.z =69.24012387300077;
+	camera.rotation.z = -1.9809898545831093;
+	camera.rotation.z = 0.01376165859231555;
+	camera.rotation.z = 3.1099581244630823;
 
 
-	function setOrientationControls(e) {
-		if (!e.alpha) {
-			return;
+	// Cloud
+	var texture = THREE.ImageUtils.loadTexture( 'cloud10.png', null, animate );
+	texture.magFilter = THREE.LinearMipMapLinearFilter;
+	texture.minFilter = THREE.LinearMipMapLinearFilter;
+
+	var fog = new THREE.Fog( 0x4584b4, - 100, 3000 );
+
+	if (isStereo) {
+		function setOrientationControls(e) {
+			if (!e.alpha) {
+				return;
+			}
+			controls = new THREE.DeviceOrientationControls(camera, true);
+			controls.connect();
+			controls.update();
+			element.addEventListener('click', fullscreen, false);
+			window.removeEventListener('deviceorientation', setOrientationControls, true);
 		}
-		controls = new THREE.DeviceOrientationControls(camera, true);
-		controls.connect();
-		controls.update();
-		element.addEventListener('click', fullscreen, false);
-		window.removeEventListener('deviceorientation', setOrientationControls, true);
+
+		window.addEventListener('deviceorientation', setOrientationControls, true);
 	}
 
-	window.addEventListener('deviceorientation', setOrientationControls, true);
 	window.addEventListener('resize', resize, false);
 	setTimeout(resize, 1);
 
@@ -110,7 +125,7 @@ function animate() {
 		if (player1.position.y > 0) {
 			var t = clock.getDelta();
 
-			player1.position.y = player1.position.y - 3;
+			player1.position.y = player1.position.y - 20;
 
 
 		} else {
@@ -119,19 +134,19 @@ function animate() {
 	}
 
 	if (keyboard.pressed("W")) {
-		player1.position.z += 3;
+		player1.position.z += 20;
 	}
 
 	if (keyboard.pressed("A")) {
-		player1.position.x += 3;
+		player1.position.x += 20;
 	}
 
 	if (keyboard.pressed("S")) {
-		player1.position.z -= 3;
+		player1.position.z -= 20;
 	}
 
 	if (keyboard.pressed("D")) {
-		player1.position.x -= 3;
+		player1.position.x -= 20;
 	}
 
 

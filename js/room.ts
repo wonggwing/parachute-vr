@@ -6,7 +6,7 @@ class Room {
 	private ready : boolean = false;
 
 	constructor() {
-		this.address = localStorage.getItem("address") || "panel.louislam.net:8324";
+		this.address = localStorage.getItem("server") || "panel.louislam.net:8324";
 	}
 
 	public run() : void {
@@ -21,7 +21,7 @@ class Room {
 
 		this.send({
 			"join" : {
-				"name" : localStorage.getItem("name") || "Player",
+				"name" : localStorage.getItem("nickname") || "Player",
 				"ready" : 0
 			}
 		});
