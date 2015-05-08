@@ -21325,7 +21325,7 @@ THREE.WebGLRenderer = function ( parameters ) {
 
 		}
 
-		// render mesh
+		// render cloud
 
 		if ( object instanceof THREE.Mesh ) {
 
@@ -21710,7 +21710,7 @@ THREE.WebGLRenderer = function ( parameters ) {
 
 		disableUnusedAttributes();
 
-		// render mesh
+		// render cloud
 
 		if ( object instanceof THREE.Mesh ) {
 
@@ -29844,8 +29844,8 @@ THREE.KeyFrameAnimation.prototype.getPrevKeyWith = function( sid, h, key ) {
 
 THREE.MorphAnimation = function ( mesh ) {
 
-	this.mesh = mesh;
-	this.frames = mesh.morphTargetInfluences.length;
+	this.cloud = cloud;
+	this.frames = cloud.morphTargetInfluences.length;
 	this.currentTime = 0;
 	this.duration = 1000;
 	this.loop = true;
@@ -29892,17 +29892,17 @@ THREE.MorphAnimation.prototype = {
 
 			if ( frame != currentFrame ) {
 
-				this.mesh.morphTargetInfluences[ lastFrame ] = 0;
-				this.mesh.morphTargetInfluences[ currentFrame ] = 1;
-				this.mesh.morphTargetInfluences[ frame ] = 0;
+				this.cloud.morphTargetInfluences[ lastFrame ] = 0;
+				this.cloud.morphTargetInfluences[ currentFrame ] = 1;
+				this.cloud.morphTargetInfluences[ frame ] = 0;
 
 				lastFrame = currentFrame;
 				currentFrame = frame;
 
 			}
 
-			this.mesh.morphTargetInfluences[ frame ] = ( this.currentTime % interpolation ) / interpolation;
-			this.mesh.morphTargetInfluences[ lastFrame ] = 1 - this.mesh.morphTargetInfluences[ frame ];
+			this.cloud.morphTargetInfluences[ frame ] = ( this.currentTime % interpolation ) / interpolation;
+			this.cloud.morphTargetInfluences[ lastFrame ] = 1 - this.cloud.morphTargetInfluences[ frame ];
 
 		}
 
@@ -31837,7 +31837,7 @@ THREE.TubeGeometry = function ( path, segments, radius, radialSegments, closed )
 	}
 
 
-	// construct the mesh
+	// construct the cloud
 
 	for ( i = 0; i < segments; i ++ ) {
 

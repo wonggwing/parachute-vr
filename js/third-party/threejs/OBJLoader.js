@@ -150,7 +150,7 @@ THREE.OBJLoader.prototype = {
 
 		}
 
-		// create mesh if no objects in text
+		// create cloud if no objects in text
 
 		if ( /^o /gm.test( text ) === false ) {
 
@@ -356,9 +356,9 @@ THREE.OBJLoader.prototype = {
 			material.name = object.material.name;
 
 			var mesh = new THREE.Mesh( buffergeometry, material );
-			mesh.name = object.name;
+			cloud.name = object.name;
 
-			container.add( mesh );
+			container.add( cloud );
 
 		}
 

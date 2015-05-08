@@ -703,7 +703,7 @@ class MimeTypeExtensionGuesser implements ExtensionGuesserInterface
         'image/x-xwindowdump' => 'xwd',
         'message/rfc822' => 'eml',
         'model/iges' => 'igs',
-        'model/mesh' => 'msh',
+        'model/cloud' => 'msh',
         'model/vnd.collada+xml' => 'dae',
         'model/vnd.dwf' => 'dwf',
         'model/vnd.gdl' => 'gdl',

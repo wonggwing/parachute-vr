@@ -14,8 +14,10 @@ var isStereo = false;
 var player1 = null;
 var loader = new THREE.OBJLoader;
 var keyboard = new THREEx.KeyboardState();
-
+var movementSpeed = 12;
 var coin;
+
+var cloud;
 
 /*
 Jquery elements
@@ -75,20 +77,51 @@ var onSceneLoaded = function () {
 	controls.noZoom = true;
 	controls.noPan = true;
 
-	camera.position.x =0.10137612238819838;
-	camera.position.y =75.14169873396278;
-	camera.position.z =69.24012387300077;
-	camera.rotation.z = -1.9809898545831093;
-	camera.rotation.z = 0.01376165859231555;
-	camera.rotation.z = 3.1099581244630823;
 
 
 	// Cloud
-	var texture = THREE.ImageUtils.loadTexture( 'cloud10.png', null, animate );
+	var geometry = new THREE.Geometry();
+
+	var texture = THREE.ImageUtils.loadTexture( 'images/cloud10.png', null, animate );
 	texture.magFilter = THREE.LinearMipMapLinearFilter;
 	texture.minFilter = THREE.LinearMipMapLinearFilter;
 
 	var fog = new THREE.Fog( 0x4584b4, - 100, 3000 );
+
+	material = new THREE.ShaderMaterial( {
+
+		uniforms: {
+
+			"map": { type: "t", value: texture },
+			"fogColor" : { type: "c", value: fog.color },
+			"fogNear" : { type: "f", value: fog.near },
+			"fogFar" : { type: "f", value: fog.far },
+
+		},
+		vertexShader: document.getElementById( 'vs' ).textContent,
+		fragmentShader: document.getElementById( 'fs' ).textContent,
+		depthWrite: false,
+
+		transparent: true
+
+	} );
+
+	var plane = new THREE.Mesh( new THREE.PlaneGeometry( 64, 64 ) );
+
+	for ( var i = 0; i < 30000; i+= 1000) {
+
+		plane.position.x = Math.random() * 1000 - 500;
+		plane.position.z = - Math.random() * Math.random() * 200 - 15;
+		plane.position.y = i;
+		plane.rotation.z = Math.random() * Math.PI;
+		plane.rotation.x = Math.PI / -2;
+		plane.scale.x = plane.scale.y = Math.random() * Math.random() * 150 + 0.5;
+		THREE.GeometryUtils.merge( geometry, plane );
+
+	}
+
+	cloud = new THREE.Mesh( geometry, material );
+	scene.add( cloud );
 
 	if (isStereo) {
 		function setOrientationControls(e) {
@@ -103,6 +136,13 @@ var onSceneLoaded = function () {
 		}
 
 		window.addEventListener('deviceorientation', setOrientationControls, true);
+	} else {
+		camera.position.x =0.10137612238819838;
+		camera.position.y =75.14169873396278;
+		camera.position.z =69.24012387300077;
+		camera.rotation.z = -1.9809898545831093;
+		camera.rotation.z = 0.01376165859231555;
+		camera.rotation.z = 3.1099581244630823;
 	}
 
 	window.addEventListener('resize', resize, false);
@@ -123,9 +163,10 @@ function animate() {
 
 	if (player1 != null) {
 		if (player1.position.y > 0) {
-			var t = clock.getDelta();
 
-			player1.position.y = player1.position.y - 20;
+
+
+			player1.position.y = player1.position.y - 5 ;
 
 
 		} else {
@@ -134,19 +175,19 @@ function animate() {
 	}
 
 	if (keyboard.pressed("W")) {
-		player1.position.z += 20;
+		player1.position.z += movementSpeed;
 	}
 
 	if (keyboard.pressed("A")) {
-		player1.position.x += 20;
+		player1.position.x += movementSpeed;
 	}
 
 	if (keyboard.pressed("S")) {
-		player1.position.z -= 20;
+		player1.position.z -= movementSpeed;
 	}
 
 	if (keyboard.pressed("D")) {
-		player1.position.x -= 20;
+		player1.position.x -= movementSpeed;
 	}
 
 
