@@ -41,10 +41,25 @@ function init() {
 	}
 
 
-	renderer = new THREE.WebGLRenderer();
+	renderer = new THREE.WebGLRenderer({alpha: true});
 	element = renderer.domElement;
+
+	var canvas = document.createElement( 'canvas' );
+	canvas.width = 32;
+	canvas.height = window.innerHeight;
+
+	var context = canvas.getContext( '2d' );
+
+	var gradient = context.createLinearGradient( 0, 0, 0, canvas.height );
+	gradient.addColorStop(0, "#1e4877");
+	gradient.addColorStop(0.5, "#4584b4");
+	context.fillStyle = gradient;
+	context.fillRect(0, 0, canvas.width, canvas.height);
+
 	container = document.getElementById('example');
 	container.appendChild(element);
+	container.style.background = 'url(' + canvas.toDataURL('image/png') + ')';
+	container.style.backgroundSize = '32px 100%';
 
 	effect = new THREE.StereoEffect(renderer);
 
@@ -86,7 +101,7 @@ var onSceneLoaded = function () {
 	texture.magFilter = THREE.LinearMipMapLinearFilter;
 	texture.minFilter = THREE.LinearMipMapLinearFilter;
 
-	var fog = new THREE.Fog( 0x4584b4, - 100, 3000 );
+	var fog = new THREE.Fog( 0x4584b4, -100, 3000 );
 
 	material = new THREE.ShaderMaterial( {
 
@@ -108,14 +123,14 @@ var onSceneLoaded = function () {
 
 	var plane = new THREE.Mesh( new THREE.PlaneGeometry( 64, 64 ) );
 
-	for ( var i = 0; i < 30000; i+= 1000) {
+	for ( var i = 10000; i < 30000;  i+= 1000) {
 
-		plane.position.x = Math.random() * 1000 - 500;
-		plane.position.z = - Math.random() * Math.random() * 200 - 15;
+		plane.position.x = Math.random() * 3000 - 1500;
+		plane.position.z = - Math.random() * Math.random() * 600 - 45;
 		plane.position.y = i;
 		plane.rotation.z = Math.random() * Math.PI;
 		plane.rotation.x = Math.PI / -2;
-		plane.scale.x = plane.scale.y = Math.random() * Math.random() * 150 + 0.5;
+		plane.scale.x = plane.scale.y = 100 + Math.random() * Math.random() * 100+ 0.5;
 		THREE.GeometryUtils.merge( geometry, plane );
 
 	}
@@ -137,12 +152,13 @@ var onSceneLoaded = function () {
 
 		window.addEventListener('deviceorientation', setOrientationControls, true);
 	} else {
-		camera.position.x =0.10137612238819838;
-		camera.position.y =75.14169873396278;
-		camera.position.z =69.24012387300077;
-		camera.rotation.z = -1.9809898545831093;
-		camera.rotation.z = 0.01376165859231555;
-		camera.rotation.z = 3.1099581244630823;
+
+		camera.position.x = 0.37;
+		camera.position.y =150.67;
+		camera.position.z =14.00;
+		camera.rotation.x = -1.8085;
+		camera.rotation.y = 0.003820;
+		camera.rotation.z = 3.1258;
 	}
 
 	window.addEventListener('resize', resize, false);
@@ -163,11 +179,7 @@ function animate() {
 
 	if (player1 != null) {
 		if (player1.position.y > 0) {
-
-
-
 			player1.position.y = player1.position.y - 5 ;
-
 
 		} else {
 			player1.position.y = 30000;
