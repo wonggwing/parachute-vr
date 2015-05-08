@@ -7,6 +7,11 @@ use Ratchet\ConnectionInterface;
 class Room implements MessageComponentInterface {
 
 	/**
+	 * @var int
+	 */
+	private $i = 0;
+
+	/**
 	 * @var SplObjectStorage
 	 */
 	private $players;
@@ -17,6 +22,7 @@ class Room implements MessageComponentInterface {
 
 	public function onOpen(ConnectionInterface $conn) {
 		$this->players->attach($conn);
+		$conn->id = $this->i++;
 		echo "Players: " .  $this->players->count() . "\n";
 	}
 
@@ -24,7 +30,8 @@ class Room implements MessageComponentInterface {
 		$json = json_decode($msg);
 
 		foreach ($json as $command => $value) {
-			echo "Command: $command\n";
+			//echo "Command: $command\n";
+
 			if ($command == "join") {
 				$from->name = $value->name;
 				$from->ready = $value->ready;
@@ -41,9 +48,31 @@ class Room implements MessageComponentInterface {
 				), $from, true);
 
 			} else if ($command == "start") {
+
+				foreach ($this->players as $p) {
+
+					if ($p->ready != true) {
+						return;
+					}
+
+				}
+
 				$this->sendToAll(array(
 					"start" => true
 				), $from, true);
+			} else if ($command == "position") {
+				$from->x = $value->x;
+				$from->y = $value->y;
+				$from->z = $value->z;
+
+				$this->sendToAll(array(
+					"position" => array(
+						"id" => $from->id,
+						"x" => $value->x,
+						"y" => $value->y,
+						"z" => $value->z
+					)
+				), $from, false);
 			}
 
 		}

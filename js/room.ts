@@ -38,6 +38,8 @@ class Room {
 			} else if (cmd == "start") {
 				this.start();
 				console.log("123");
+			} else if (cmd == "position") {
+				updatePosition(json);
 			}
 		}
 	};
@@ -58,6 +60,7 @@ class Room {
 
 	private start() : void {
 		$("#example").show();
+		gameStart();
 	}
 
 	public closeAll() : void {

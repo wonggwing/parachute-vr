@@ -22,6 +22,9 @@ var Room = (function () {
                     _this.start();
                     console.log("123");
                 }
+                else if (cmd == "position") {
+                    updatePosition(json);
+                }
             }
         };
         this.address = localStorage.getItem("server") || "panel.louislam.net:8324";
@@ -45,6 +48,7 @@ var Room = (function () {
     };
     Room.prototype.start = function () {
         $("#example").show();
+        gameStart();
     };
     Room.prototype.closeAll = function () {
         this.send({ "close": null });

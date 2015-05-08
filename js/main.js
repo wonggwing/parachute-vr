@@ -2,22 +2,31 @@
  * Created by Louis Lam on 3/10/2015.
  */
 var camera, scene, renderer;
+var started = false;
+var height = 60000;
 
 /**
  * THREE.StereoEffect
  */
 var effect;
+
 var controls;
 var element, container;
 var clock = new THREE.Clock();
 var isStereo = false;
-var player1 = null;
+
+var currentPlayer = null;
+var playerModel;
+var playerList = [];
+
 var loader = new THREE.OBJLoader;
 var keyboard = new THREEx.KeyboardState();
-var movementSpeed = 12;
+var movementSpeed = 30;
 var coin;
 
 var cloud;
+
+var counter = 0;
 
 /*
 Jquery elements
@@ -26,10 +35,27 @@ var heightJQuery = null;
 
 init();
 
-// Ready
+// All resources Ready
 var ready = function () {
 	animate();
 };
+
+function gameStart() {
+	currentPlayer.position.y = height;
+	started = true;
+}
+
+function updatePosition(json) {
+	if (playerList[json.position.id] == undefined) {
+		playerList[json.position.id] = currentPlayer.clone();
+		scene.add(playerList[json.position.id]);
+	}
+
+	playerList[json.position.id].position.x = json.position.x;
+	playerList[json.position.id].position.y = json.position.y;
+	playerList[json.position.id].position.z = json.position.z;
+
+}
 
 function init() {
 	heightJQuery = $("#height");
@@ -40,7 +66,6 @@ function init() {
 		isStereo = false;
 	}
 
-
 	renderer = new THREE.WebGLRenderer({alpha: true});
 	element = renderer.domElement;
 
@@ -48,6 +73,7 @@ function init() {
 	canvas.width = 32;
 	canvas.height = window.innerHeight;
 
+	// Background Color
 	var context = canvas.getContext( '2d' );
 
 	var gradient = context.createLinearGradient( 0, 0, 0, canvas.height );
@@ -61,10 +87,12 @@ function init() {
 	container.style.background = 'url(' + canvas.toDataURL('image/png') + ')';
 	container.style.backgroundSize = '32px 100%';
 
+	// StereoEffect
 	effect = new THREE.StereoEffect(renderer);
 
 	var loader = new THREE.ObjectLoader;
 
+	// Load the scene
 	loader.load('json/scene.json?v=' + VERSION, function (obj) {
 		scene = obj;
 		onSceneLoaded();
@@ -73,14 +101,18 @@ function init() {
 
 
 var onSceneLoaded = function () {
-
+	scene.fog = new THREE.Fog(0xffffff, 0.05, 9800);
 	camera = scene.getObjectByName("PerspectiveCamera 1", true);
-	player1 = scene.getObjectByName("player", true);
+	currentPlayer = scene.getObjectByName("player", true);
+	playerModel = scene.getObjectByName("playerModel", true);
 	coin = scene.getObjectByName("coin", true)
 
+
+	// TODO: Generate Coins
 	var newQueen = coin.clone();
 	newQueen.position.y -= 1000;
 	scene.add(newQueen);
+
 
 	controls = new THREE.OrbitControls(camera, element);
 	controls.rotateUp(Math.PI / 4);
@@ -123,7 +155,7 @@ var onSceneLoaded = function () {
 
 	var plane = new THREE.Mesh( new THREE.PlaneGeometry( 64, 64 ) );
 
-	for ( var i = 10000; i < 30000;  i+= 1000) {
+	for ( var i = 7000; i < height;  i+= 1000) {
 
 		plane.position.x = Math.random() * 3000 - 1500;
 		plane.position.z = - Math.random() * Math.random() * 600 - 45;
@@ -152,7 +184,6 @@ var onSceneLoaded = function () {
 
 		window.addEventListener('deviceorientation', setOrientationControls, true);
 	} else {
-
 		camera.position.x = 0.37;
 		camera.position.y =150.67;
 		camera.position.z =14.00;
@@ -169,50 +200,82 @@ var onSceneLoaded = function () {
 
 
 function animate() {
+	counter++;
+
 	requestAnimationFrame(animate);
 	resize();
 	camera.updateProjectionMatrix();
 
+	var delta = clock.getDelta();
+
 	if (controls != null) {
-		controls.update(clock.getDelta());
+		controls.update(delta);
 	}
 
-	if (player1 != null) {
-		if (player1.position.y > 0) {
-			player1.position.y = player1.position.y - 5 ;
+	if (started) {
 
-		} else {
-			player1.position.y = 30000;
+		if (currentPlayer != null) {
+			if (currentPlayer.position.y > 16) {
+				currentPlayer.position.y = currentPlayer.position.y -  (delta * 100) ;
+
+
+				if (keyboard.pressed("W")) {
+					if (currentPlayer.position.z <= 4000)
+						currentPlayer.position.z += delta * movementSpeed;
+				}
+
+				if (keyboard.pressed("A")) {
+					if (currentPlayer.position.x <= 4000)
+						currentPlayer.position.x += delta * movementSpeed;
+				}
+
+				if (keyboard.pressed("S")) {
+					if (currentPlayer.position.z >= -4000)
+						currentPlayer.position.z -= delta * movementSpeed;
+				}
+
+				if (keyboard.pressed("D")) {
+					if (currentPlayer.position.x >= -4000)
+						currentPlayer.position.x -= delta * movementSpeed;
+				}
+
+
+
+			} else {
+				//currentPlayer.position.y = 30000;
+			}
+
+
+			playerList.forEach(function (player) {
+				player.position.y = player.position.y - (delta * 100);
+			});
+
+
+			if (currentPlayer.position.y > 15) {
+				room.send({"position" : {
+					x: currentPlayer.position.x,
+					y: currentPlayer.position.y,
+					z: currentPlayer.position.z
+				}});
+			}
+
+
+
 		}
-	}
-
-	if (keyboard.pressed("W")) {
-		player1.position.z += movementSpeed;
-	}
-
-	if (keyboard.pressed("A")) {
-		player1.position.x += movementSpeed;
-	}
-
-	if (keyboard.pressed("S")) {
-		player1.position.z -= movementSpeed;
-	}
-
-	if (keyboard.pressed("D")) {
-		player1.position.x -= movementSpeed;
-	}
 
 
-	coin.rotation.z = coin.rotation.z + 0.1;
+
+		coin.rotation.z = coin.rotation.z + 0.1;
 
 
-	heightJQuery.html(Math.round(player1.position.y));
+		heightJQuery.html(Math.round(currentPlayer.position.y));
 
 
-	if (isStereo) {
-		effect.render(scene, camera);
-	} else {
-		renderer.render(scene, camera);
+		if (isStereo) {
+			effect.render(scene, camera);
+		} else {
+			renderer.render(scene, camera);
+		}
 	}
 }
 
