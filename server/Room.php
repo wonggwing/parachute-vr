@@ -11,6 +11,8 @@ class Room implements MessageComponentInterface {
 	 */
 	private $i = 0;
 
+	private $coinsJson = "{}";
+
 	/**
 	 * @var SplObjectStorage
 	 */
@@ -18,6 +20,32 @@ class Room implements MessageComponentInterface {
 
 	public function __construct() {
 		$this->players = new \SplObjectStorage();
+
+		$list = array(
+			"coins" => array()
+		);
+
+		for ($i = 20; $i <= 18000; $i += 200) {
+			$list["coins"][] = (object) array(
+				"y" => $i,
+				"x" => rand(-2000, 2000),
+				"z" => rand(-2000, 2000)
+			);
+
+			$list["coins"][]= (object) array(
+				"y" => $i,
+				"x" => rand(-2000, 2000),
+				"z" => rand(-2000, 2000)
+			);
+
+			$list["coins"][] = (object) array(
+				"y" => $i,
+				"x" => rand(-3000, 3000),
+				"z" => rand(-3000, 3000)
+			);
+		}
+
+		$this->coinsJson = json_encode((object) $list);
 	}
 
 	public function onOpen(ConnectionInterface $conn) {
@@ -36,6 +64,8 @@ class Room implements MessageComponentInterface {
 				$from->name = $value->name;
 				$from->ready = $value->ready;
 				$this->updateList();
+
+				$from->send($this->coinsJson);
 
 			} else if ($command == "ready") {
 				//echo "$from->name set ready to $value\n";

@@ -28,7 +28,7 @@ class Room {
 	};
 
 	private onMessage = (event : MessageEvent) => {
-		console.log(event.data);
+		//console.log(event.data);
 
 		var json = JSON.parse(event.data);
 
@@ -40,13 +40,21 @@ class Room {
 				console.log("123");
 			} else if (cmd == "position") {
 				updatePosition(json);
+
+			} else if (cmd == "coins") {
+				coinsJson = json;
+
+				if (isReady) {
+					initCoinsPosition();
+					coinsJson = null;
+				}
 			}
 		}
 	};
 
 	public send(obj) : void {
 		var str = JSON.stringify(obj);
-		console.log(str);
+		//console.log(str);
 		this.webSocket.send(str);
 	}
 

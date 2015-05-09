@@ -12,7 +12,7 @@ var Room = (function () {
             });
         };
         this.onMessage = function (event) {
-            console.log(event.data);
+            //console.log(event.data);
             var json = JSON.parse(event.data);
             for (var cmd in json) {
                 if (cmd == "list") {
@@ -24,6 +24,13 @@ var Room = (function () {
                 }
                 else if (cmd == "position") {
                     updatePosition(json);
+                }
+                else if (cmd == "coins") {
+                    coinsJson = json;
+                    if (isReady) {
+                        initCoinsPosition();
+                        coinsJson = null;
+                    }
                 }
             }
         };
@@ -37,7 +44,7 @@ var Room = (function () {
     };
     Room.prototype.send = function (obj) {
         var str = JSON.stringify(obj);
-        console.log(str);
+        //console.log(str);
         this.webSocket.send(str);
     };
     Room.prototype.toggleReady = function () {

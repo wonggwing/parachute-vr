@@ -3,7 +3,9 @@
  */
 var camera, scene, renderer;
 var started = false;
-var height = 60000;
+var isReady = false;
+var height = 18000;
+
 
 /**
  * THREE.StereoEffect
@@ -17,12 +19,20 @@ var isStereo = false;
 
 var currentPlayer = null;
 var playerModel;
+var playerCollision;
 var playerList = [];
 
 var loader = new THREE.OBJLoader;
 var keyboard = new THREEx.KeyboardState();
-var movementSpeed = 30;
+var movementSpeed = 300;
+
+/** Coin Model */
 var coin;
+var coinsList = [];
+var coinsJson = null;
+var coinAmount = 0;
+var coinJQuery;
+
 
 var cloud;
 
@@ -37,6 +47,12 @@ init();
 
 // All resources Ready
 var ready = function () {
+	isReady = true;
+
+	if (coinsJson != null) {
+		initCoinsPosition();
+	}
+
 	animate();
 };
 
@@ -57,8 +73,28 @@ function updatePosition(json) {
 
 }
 
+// Generate Coins
+function initCoinsPosition() {
+
+	if (coin == undefined) {
+
+	} else {
+		var temp;
+		for (var i = 0; i < coinsJson.coins.length; i++) {
+			temp = coin.clone();
+			temp.position.x = coinsJson.coins[i].x;
+			temp.position.y = coinsJson.coins[i].y;
+			temp.position.z = coinsJson.coins[i].z;
+			scene.add(temp);
+			coinsList.push(temp);
+		}
+	}
+
+}
+
 function init() {
 	heightJQuery = $("#height");
+	coinJQuery = $("#coin");
 
 	if (localStorage.getItem("stereo") == "true") {
 		isStereo = true;
@@ -105,26 +141,20 @@ var onSceneLoaded = function () {
 	camera = scene.getObjectByName("PerspectiveCamera 1", true);
 	currentPlayer = scene.getObjectByName("player", true);
 	playerModel = scene.getObjectByName("playerModel", true);
+	playerCollision = scene.getObjectByName("c", true);
 	coin = scene.getObjectByName("coin", true)
 
-
-	// TODO: Generate Coins
-	var newQueen = coin.clone();
-	newQueen.position.y -= 1000;
-	scene.add(newQueen);
-
-
-	controls = new THREE.OrbitControls(camera, element);
-	controls.rotateUp(Math.PI / 4);
-	controls.target.set(
-		camera.position.x + 0.1,
-		camera.position.y,
-		camera.position.z
-	);
-	controls.noZoom = true;
-	controls.noPan = true;
-
-
+	if (!isStereo) {
+		controls = new THREE.OrbitControls(camera, element);
+		controls.rotateUp(Math.PI / 4);
+		controls.target.set(
+			camera.position.x + 0.1,
+			camera.position.y,
+			camera.position.z
+		);
+		controls.noZoom = true;
+		controls.noPan = true;
+	}
 
 	// Cloud
 	var geometry = new THREE.Geometry();
@@ -155,7 +185,7 @@ var onSceneLoaded = function () {
 
 	var plane = new THREE.Mesh( new THREE.PlaneGeometry( 64, 64 ) );
 
-	for ( var i = 7000; i < height;  i+= 1000) {
+	for ( var i = 6000; i < height;  i+= 1000) {
 
 		plane.position.x = Math.random() * 3000 - 1500;
 		plane.position.z = - Math.random() * Math.random() * 600 - 45;
@@ -216,7 +246,7 @@ function animate() {
 
 		if (currentPlayer != null) {
 			if (currentPlayer.position.y > 16) {
-				currentPlayer.position.y = currentPlayer.position.y -  (delta * 100) ;
+				currentPlayer.position.y = currentPlayer.position.y -  (delta * 200) ;
 
 
 				if (keyboard.pressed("W")) {
@@ -247,7 +277,7 @@ function animate() {
 
 
 			playerList.forEach(function (player) {
-				player.position.y = player.position.y - (delta * 100);
+				player.position.y = player.position.y - (delta * 200);
 			});
 
 
@@ -263,9 +293,42 @@ function animate() {
 
 		}
 
+		// Collision Detection
+		var x1 = currentPlayer.position.x - 50;
+		var x2 = currentPlayer.position.x + 50;
+		var y1 = currentPlayer.position.y - 50;
+		var y2 = currentPlayer.position.y + 50;
+		var z1 = currentPlayer.position.z - 50;
+		var z2 = currentPlayer.position.z + 50;
 
+		// Coin Rotate
+		coinsList.forEach(function (c) {
+			c.rotation.z = c.rotation.z + 0.07;
 
-		coin.rotation.z = coin.rotation.z + 0.1;
+			var cx1 = c.position.x - 50;
+			var cx2 = c.position.x + 50;
+			var cy1 = c.position.y - 50;
+			var cy2 = c.position.y + 50;
+			var cz1 = c.position.z - 50;
+			var cz2 = c.position.z + 50;
+
+			if ((cx1 <= x1  &&  x1<= cx2) || (cx1 <= x2 && x2 <= cx2)) {
+
+				if ((cy1 <=  y1 && y1 <= cy2) || (cy1 <=  y2 && y2 <= cy2)) {
+					if ((cz1 <=  z1 && z1 <= cz2) || (cz1 <=  z2 && z2 <= cz2)) {
+						 // Hit a coin!
+						scene.remove(c);
+						var index = coinsList.indexOf(c);
+
+						if (index > -1) {
+							coinsList.splice(index, 1);
+						}
+
+						coinJQuery.html(++coinAmount);
+					}
+				}
+			}
+		})
 
 
 		heightJQuery.html(Math.round(currentPlayer.position.y));
