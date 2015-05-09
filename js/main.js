@@ -4,7 +4,7 @@
 var camera, scene, renderer;
 var started = false;
 var isReady = false;
-var height = 18000;
+var height = 30000;
 
 
 /**
