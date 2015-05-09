@@ -48,7 +48,7 @@ init();
 // All resources Ready
 var ready = function () {
 	isReady = true;
-
+	currentPlayer.position.y = height;
 	if (coinsJson != null) {
 		initCoinsPosition();
 	}
@@ -57,7 +57,7 @@ var ready = function () {
 };
 
 function gameStart() {
-	currentPlayer.position.y = height;
+
 	started = true;
 }
 
@@ -295,11 +295,11 @@ function animate() {
 
 		// Collision Detection
 		var x1 = currentPlayer.position.x - 50;
-		var x2 = currentPlayer.position.x + 50;
+		var x2 = currentPlayer.position.x + 100;
 		var y1 = currentPlayer.position.y - 50;
 		var y2 = currentPlayer.position.y + 50;
-		var z1 = currentPlayer.position.z - 50;
-		var z2 = currentPlayer.position.z + 50;
+		var z1 = currentPlayer.position.z - 0;
+		var z2 = currentPlayer.position.z + 100;
 
 		// Coin Rotate
 		coinsList.forEach(function (c) {
