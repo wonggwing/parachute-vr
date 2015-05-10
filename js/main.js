@@ -298,6 +298,7 @@ function animate() {
                 var score = coinAmount;
 
                 $.get("insert_db.php", { player: player, score: score });
+                window.location = "scores.php";
 
             }
 
