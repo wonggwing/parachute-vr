@@ -1,6 +1,9 @@
 /**
  * Created by Louis Lam on 3/10/2015.
  */
+
+var lessThan15 = false;
+
 var camera, scene, renderer;
 var started = false;
 var isReady = false;
@@ -287,8 +290,16 @@ function animate() {
 					y: currentPlayer.position.y,
 					z: currentPlayer.position.z
 				}});
-			}
+			}else if(!lessThan15){
+                lessThan15 = true;
+                console.log('less than : '+coinAmount);
 
+                var player = localStorage.getItem("nickname");
+                var score = coinAmount;
+
+                $.get("insert_db.php", { player: player, score: score });
+
+            }
 
 
 		}
