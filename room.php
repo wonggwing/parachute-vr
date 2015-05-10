@@ -25,6 +25,11 @@ define("VERSION", rand(0,99999999));
             margin: 30px;
         }
 
+        #state h4{
+
+            color: orange !important;
+        }
+
         .horizon_ul{
             margin: 0;
             padding: 0;
