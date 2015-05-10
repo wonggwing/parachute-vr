@@ -62,6 +62,7 @@ var ready = function () {
 function gameStart() {
 
 	started = true;
+    playSound("bg");
 }
 
 function updatePosition(json) {
@@ -300,6 +301,7 @@ function animate() {
                 $.get("insert_db.php", { player: player, score: score });
                 window.location = "scores.php";
 
+
             }
 
 
@@ -337,6 +339,7 @@ function animate() {
 						}
 
 						coinJQuery.html(++coinAmount);
+                        playSound("coin");
 					}
 				}
 			}
