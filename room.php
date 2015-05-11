@@ -102,5 +102,4 @@ define("VERSION", rand(0,99999999));
     <script src="js/third-party/threejs/threex.keyboardstate.js"></script>
     <script src="js/main.js?v=<?=VERSION ?>"></script>
 
-
 <?php include('footer.php'); ?>

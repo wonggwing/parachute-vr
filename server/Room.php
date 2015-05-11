@@ -26,26 +26,52 @@ class Room implements MessageComponentInterface {
 		);
 
 		for ($i = 20; $i <= 30000; $i += 200) {
-			$list["coins"][] = (object) array(
-				"y" => $i,
-				"x" => rand(-2000, 2000),
-				"z" => rand(-2000, 2000)
-			);
+            $list["coins"][] = (object) array(
+                "y" => $i,
+                "x" => rand(-2000, 2000),
+                "z" => rand(-2000, 2000)
+            );
 
-			$list["coins"][]= (object) array(
-				"y" => $i,
-				"x" => rand(-2000, 2000),
-				"z" => rand(-2000, 2000)
-			);
+            $list["coins"][]= (object) array(
+                "y" => $i,
+                "x" => rand(-2000, 2000),
+                "z" => rand(-2000, 2000)
+            );
 
-			$list["coins"][] = (object) array(
-				"y" => $i,
-				"x" => rand(-3000, 3000),
-				"z" => rand(-3000, 3000)
-			);
-		}
+            $list["coins"][] = (object) array(
+                "y" => $i,
+                "x" => rand(-3000, 3000),
+                "z" => rand(-3000, 3000)
+            );
+        }
 
-		$this->coinsJson = json_encode((object) $list);
+        $this->coinsJson = json_encode((object) $list);
+
+        $bird_list = array(
+            "birds" => array()
+        );
+
+        for ($i = 20; $i <= 30000; $i += 200) {
+            $bird_list["birds"][] = (object) array(
+                "y" => $i,
+                "x" => rand(-2000, 2000),
+                "z" => rand(-2000, 2000)
+            );
+
+            $bird_list["birds"][]= (object) array(
+                "y" => $i,
+                "x" => rand(-2000, 2000),
+                "z" => rand(-2000, 2000)
+            );
+
+            $bird_list["birds"][] = (object) array(
+                "y" => $i,
+                "x" => rand(-3000, 3000),
+                "z" => rand(-3000, 3000)
+            );
+        }
+
+        $this->birdsJson = json_encode((object) $bird_list);
 	}
 
 	public function onOpen(ConnectionInterface $conn) {
@@ -66,6 +92,7 @@ class Room implements MessageComponentInterface {
 				$this->updateList();
 
 				$from->send($this->coinsJson);
+                $from->send($this->birdsJson);
 
 			} else if ($command == "ready") {
 				//echo "$from->name set ready to $value\n";
