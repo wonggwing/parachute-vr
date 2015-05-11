@@ -80,9 +80,14 @@ define("VERSION", rand(0,99999999));
         </section>
         <section>
             <div id="state">
+                <?php if ( $_GET["mode"] == "coins" ) { ?>
                 <h4><i class="icon small rounded color1 fa-cloud">&nbsp;</i> Height: <span id="height">30000</span>m</h4>
                 <h4><i class="icon small rounded color9 fa-money">&nbsp;</i> Coins: <span id="coin">0</span></h4>
-            </div>
+                <?php } else { ?>
+                <h4><i class="icon small rounded color1 fa-cloud">&nbsp;</i> Height: <span id="height">10000</span>m</h4>
+                <h4><i class="icon small rounded color6 fa-ambulance" style="">&nbsp;</i> First to land suceessfully wins!</h4>
+                <?php } ?>
+            </div> 
         </section>
     </div>
 
