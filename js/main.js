@@ -3,6 +3,8 @@
  */
 
 var lessThan15 = false;
+var openParachute = false;
+var parachuteModel;
 
 var camera, scene, renderer;
 var started = false;
@@ -145,6 +147,8 @@ var onSceneLoaded = function () {
 	camera = scene.getObjectByName("PerspectiveCamera 1", true);
 	currentPlayer = scene.getObjectByName("player", true);
 	playerModel = scene.getObjectByName("playerModel", true);
+    parachuteModel = scene.getObjectByName("Parachute.obj", true);
+    parachuteModel.visible = false;
 	playerCollision = scene.getObjectByName("c", true);
 	coin = scene.getObjectByName("coin", true)
 
@@ -250,7 +254,14 @@ function animate() {
 
 		if (currentPlayer != null) {
 			if (currentPlayer.position.y > 16) {
-				currentPlayer.position.y = currentPlayer.position.y -  (delta * 200) ;
+
+                if(!openParachute) {
+                    currentPlayer.position.y = currentPlayer.position.y - (delta * 200);
+                }else{
+                    currentPlayer.position.y = currentPlayer.position.y - (delta * 50);
+                }
+
+                //console.log(currentPlayer.position.y);
 
 
 				if (keyboard.pressed("W")) {
@@ -273,6 +284,10 @@ function animate() {
 						currentPlayer.position.x -= delta * movementSpeed;
 				}
 
+                if(keyboard.pressed("space")){
+                    parachuteModel.visible = true;
+                    openParachute = true;
+                }
 
 
 			} else {
@@ -291,7 +306,9 @@ function animate() {
 					y: currentPlayer.position.y,
 					z: currentPlayer.position.z
 				}});
-			}else if(!lessThan15){
+			}
+
+            if(currentPlayer.position.y <= 20 && !lessThan15){
                 lessThan15 = true;
                 console.log('less than : '+coinAmount);
 
@@ -300,7 +317,6 @@ function animate() {
 
                 $.get("insert_db.php", { player: player, score: score });
                 window.location = "scores.php";
-
 
             }
 

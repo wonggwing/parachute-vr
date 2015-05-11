@@ -19,7 +19,13 @@
         <tr>
             <td><?= $row['player']?></td>
             <td><?= $row['score']?></td>
-            <td><?=  $row['finish_date']?></td>
+            <?php
+                $date = new DateTime($row['finish_date']);
+                $date->setTimezone(new DateTimeZone('Asia/Hong_Kong'));
+            ?>
+
+
+            <td><?=  $date->format('Y-m-d H:i:s') ?></td>
         </tr>
 
     <? } ?>
