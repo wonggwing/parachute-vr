@@ -44,6 +44,10 @@ define("VERSION", rand(0,99999999));
             margin-left: auto;
             margin-right: auto;
         }
+
+        .speedometer{
+            visibility: hidden;
+        }
     </style>
 
     <div id="room">
@@ -81,11 +85,12 @@ define("VERSION", rand(0,99999999));
         <section>
             <div id="state">
                 <?php if ( $_GET["mode"] == "coins" ) { ?>
-                <h4><i class="icon small rounded color1 fa-cloud">&nbsp;</i> Height: <span id="height">30000</span>m</h4>
-                <h4><i class="icon small rounded color9 fa-money">&nbsp;</i> Coins: <span id="coin">0</span></h4>
+                    <h4><i class="icon small rounded color1 fa-cloud">&nbsp;</i> Height: <span id="height">30000</span>m</h4>
+                    <h4><i class="icon small rounded color9 fa-money">&nbsp;</i> Coins: <span id="coin">0</span></h4>
                 <?php } else { ?>
-                <h4><i class="icon small rounded color1 fa-cloud">&nbsp;</i> Height: <span id="height">10000</span>m</h4>
-                <h4><i class="icon small rounded color6 fa-ambulance" style="">&nbsp;</i> First to land suceessfully wins!</h4>
+                    <h4><i class="icon small rounded color1 fa-cloud">&nbsp;</i> Height: <span id="height">10000</span>m</h4>
+                    <h4><i class="icon small rounded color6 fa-ambulance" style="">&nbsp;</i> First to land suceessfully wins!</h4>
+                    <h4 class="speedometer"><i class="icon small rounded color8 fa-rocket" style="">&nbsp;</i> Speed: <span id="speed">0</span>km/h</h4>
                 <?php } ?>
             </div> 
         </section>
@@ -105,6 +110,10 @@ define("VERSION", rand(0,99999999));
     <script src="js/third-party/threejs/DeviceOrientationControls.js"></script>
     <script src="js/third-party/threejs/OrbitControls.js"></script>
     <script src="js/third-party/threejs/threex.keyboardstate.js"></script>
-    <script src="js/main.js?v=<?=VERSION ?>"></script>
+    <?php if ( $_GET["mode"] == "coins" ) { ?>
+        <script src="js/main.js?v=<?=VERSION ?>"></script>
+    <?php } else { ?>
+        <script src="js/mainTimeAttack.js?v=<?=VERSION ?>"></script>
+    <?php } ?>
 
 <?php include('footer.php'); ?>
