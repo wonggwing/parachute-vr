@@ -5,6 +5,7 @@
 var lessThan15 = false;
 var openParachute = false;
 var parachuteModel;
+var autoOpenParachute = false;
 
 var camera, scene, renderer;
 var started = false;
@@ -139,6 +140,14 @@ function init() {
 		scene = obj;
 		onSceneLoaded();
 	});
+
+    var width = $(window).width();
+    console.log(width);
+
+    if(width < 500){
+        autoOpenParachute = true;
+        console.log("auto open:   "+width);
+    }
 }
 
 
@@ -284,7 +293,8 @@ function animate() {
 						currentPlayer.position.x -= delta * movementSpeed;
 				}
 
-                if(keyboard.pressed("space")){
+                if(keyboard.pressed("space") || (autoOpenParachute && currentPlayer.position.y < 1000) ){
+                    autoOpenParachute = false;
                     parachuteModel.visible = true;
                     openParachute = true;
                 }
@@ -315,8 +325,10 @@ function animate() {
                 var player = localStorage.getItem("nickname");
                 var score = coinAmount;
 
-                $.get("insert_db.php", { player: player, score: score });
-                window.location = "scores.php";
+                $.get("insert_db.php", { player: player, score: score }, function(){
+                    //alert(player+" "+score+" ");
+                    window.location = "scores.php";
+                });
 
             }
 
