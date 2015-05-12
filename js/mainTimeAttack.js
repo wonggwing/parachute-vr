@@ -2,14 +2,31 @@
  * Created by Louis Lam on 3/10/2015.
  */
 
+var startTime, endTime;
+
 var lessThan15 = false;
 var openParachute = false;
 var parachuteModel;
+var autoOpenParachute = false;
 
 var camera, scene, renderer;
 var started = false;
 var isReady = false;
-var height = 10000;
+var height = 30000;
+
+
+
+var targetCameraPosition = {
+	x: 0.37,
+	y: 150.67,
+	z: 14.00
+};
+
+var targetPlayerRotation = {
+	x: 0,
+	y: 0,
+	z: 0
+};
 
 
 /**
@@ -38,10 +55,13 @@ var coinsJson = null;
 var coinAmount = 0;
 var coinJQuery;
 
+/* Birds */
+var bird;
+var birdsList = [];
+var birdsJson = null;
 
 var cloud;
 
-var counter = 0;
 var timeAttackRunPer10 = 10;
 var accelerationPer10 = 10;
 var moveDragPer10 = 11;
@@ -57,9 +77,6 @@ init();
 var ready = function () {
 	isReady = true;
 	currentPlayer.position.y = height;
-	if (coinsJson != null) {
-		initCoinsPosition();
-	}
 	animate();
 };
 
@@ -68,23 +85,68 @@ function gameStart() {
 	started = true;
     playSound("bg");
 	$(".speedometer").css("visibility", "visible");
+    startTime = new Date();
 }
 
 function updatePosition(json) {
+	if (currentPlayer == null) {
+		return;
+	}
+
 	if (playerList[json.position.id] == undefined) {
 		playerList[json.position.id] = currentPlayer.clone();
+		playerList[json.position.id].openParachute = false;
+		var para = playerList[json.position.id].getObjectByName("Parachute.obj", true);
+		para.visible = false;
 		scene.add(playerList[json.position.id]);
 	}
 
-	playerList[json.position.id].position.x = json.position.x;
-	playerList[json.position.id].position.y = json.position.y;
-	playerList[json.position.id].position.z = json.position.z;
+	playerList[json.position.id].targetPosition = {
+		x: json.position.x,
+		y: json.position.y,
+		z: json.position.z
+	};
+
+	//playerList[json.position.id].position.x = json.position.x;
+	//playerList[json.position.id].position.y = json.position.y;
+	//playerList[json.position.id].position.z = json.position.z;
+
+	var para = playerList[json.position.id].getObjectByName("Parachute.obj", true);
+	para.visible = json.position.open;
+	playerList[json.position.id].openParachute = json.position.open;
 }
+
 
 // Generate Coins
 function initCoinsPosition() {
 	// removed for time attack mode
 }
+
+
+function initBirdsPosition() {
+
+
+
+	if (bird == undefined) {
+
+	} else {
+
+		var tempJson = birdsJson;
+		birdsJson = null;
+
+		console.log(birdsJson);
+		var temp;
+		for (var i = 0; i < tempJson.birds.length; i++) {
+			temp = bird.clone();
+			temp.position.x = tempJson.birds[i].x;
+			temp.position.y = tempJson.birds[i].y;
+			temp.position.z = tempJson.birds[i].z;
+			scene.add(temp);
+			birdsList.push(temp);
+		}
+	}
+}
+
 
 function init() {
 	heightJQuery = $("#height");
@@ -119,7 +181,9 @@ function init() {
 	container.style.backgroundSize = '32px 100%';
 
 	// StereoEffect
-	effect = new THREE.StereoEffect(renderer);
+	if (isStereo) {
+		effect = new THREE.StereoEffect(renderer);
+	}
 
 	var loader = new THREE.ObjectLoader;
 
@@ -140,6 +204,7 @@ var onSceneLoaded = function () {
     parachuteModel.visible = false;
 	playerCollision = scene.getObjectByName("c", true);
 	coin = scene.getObjectByName("coin", true)
+	bird = scene.getObjectByName("bird", true);
 
 	if (!isStereo) {
 		controls = new THREE.OrbitControls(camera, element);
@@ -182,15 +247,15 @@ var onSceneLoaded = function () {
 
 	var plane = new THREE.Mesh( new THREE.PlaneGeometry( 64, 64 ) );
 
-	for ( var i = 6000; i < height;  i+= 1000) {
+	for (var i = 3000; i < height; i += 1500) {
 
 		plane.position.x = Math.random() * 3000 - 1500;
-		plane.position.z = - Math.random() * Math.random() * 600 - 45;
+		plane.position.z = -Math.random() * Math.random() * 600 - 45;
 		plane.position.y = i;
 		plane.rotation.z = Math.random() * Math.PI;
 		plane.rotation.x = Math.PI / -2;
-		plane.scale.x = plane.scale.y = 100 + Math.random() * Math.random() * 100+ 0.5;
-		THREE.GeometryUtils.merge( geometry, plane );
+		plane.scale.x = plane.scale.y = 100 + Math.random() * Math.random() * 100 + 0.5;
+		THREE.GeometryUtils.merge(geometry, plane);
 
 	}
 
@@ -227,7 +292,10 @@ var onSceneLoaded = function () {
 
 
 function animate() {
-	counter++;
+
+	if (birdsJson != null) {
+		initBirdsPosition();
+	}
 
 	requestAnimationFrame(animate);
 	resize();
@@ -245,55 +313,77 @@ function animate() {
 			if (currentPlayer.position.y > 16) {
 
                 if(!openParachute) {
-                    currentPlayer.position.y = currentPlayer.position.y - (delta * 200);
+                    currentPlayer.position.y = currentPlayer.position.y - (delta * movementSpeed);
                 }else{
                     currentPlayer.position.y = currentPlayer.position.y - (delta * 50);
                 }
 
                 //console.log(currentPlayer.position.y);
 
+				targetPlayerRotation.x = 0;
+				targetPlayerRotation.z = 0;
+
                 // even if he press all the key, it is the same drag
                 var dragEnabled = false;
 				if (keyboard.pressed("W")) {
+					targetPlayerRotation.x = 0.2;
 					if (currentPlayer.position.z <= 4000)
-						currentPlayer.position.z += delta * movementSpeed;
+						currentPlayer.position.z += delta * 300;
 
 					dragEnabled = true;
 				}
 
 				if (keyboard.pressed("A")) {
+					targetPlayerRotation.z = -0.2;
 					if (currentPlayer.position.x <= 4000)
-						currentPlayer.position.x += delta * movementSpeed;
+						currentPlayer.position.x += delta * 300;
 
 					dragEnabled = true;
 				}
 
 				if (keyboard.pressed("S")) {
+					targetPlayerRotation.x = -0.2;
 					if (currentPlayer.position.z >= -4000)
-						currentPlayer.position.z -= delta * movementSpeed;
+						currentPlayer.position.z -= delta * 300;
 
 					dragEnabled = true;
 				}
 
 				if (keyboard.pressed("D")) {
+					targetPlayerRotation.z = 0.2;
 					if (currentPlayer.position.x >= -4000)
-						currentPlayer.position.x -= delta * movementSpeed;
+						currentPlayer.position.x -= delta * 300;
 
 					dragEnabled = true;
 				}
 
 				if ( timeAttackRunPer10 >= 10 ){
 					if ( dragEnabled ){
-						if ( movementSpeed > 200 ){
+						if ( movementSpeed > 100 ){
 							movementSpeed-=moveDragPer10;
 						}
 					}
 				}
 
-                if(keyboard.pressed("space")){
-                    parachuteModel.visible = true;
-                    openParachute = true;
-                }
+				if (keyboard.pressed("space") || (autoOpenParachute && currentPlayer.position.y < 1000)) {
+					autoOpenParachute = false;
+					parachuteModel.visible = true;
+					openParachute = true;
+					targetCameraPosition.x = -9.234444120401424;
+					targetCameraPosition.y = 327.2596578677634;
+					targetCameraPosition.z = -228.24005012029926;
+					room.send({"open": true});
+				}
+
+				if (keyboard.pressed("F") || (autoOpenParachute && currentPlayer.position.y < 1000)) {
+					autoOpenParachute = false;
+					parachuteModel.visible = false;
+					openParachute = false;
+					targetCameraPosition.x = 0.37;
+					targetCameraPosition.y = 150.67;
+					targetCameraPosition.z = 14.00;
+					room.send({"open": false});
+				}
 
 
 			} else {
@@ -302,7 +392,23 @@ function animate() {
 
 
 			playerList.forEach(function (player) {
-				player.position.y = player.position.y - (delta * 200);
+				if (!player.openParachute) {
+					player.position.y = player.position.y - (delta * 200);
+				} else {
+					player.position.y = player.position.y - (delta * 50);
+				}
+
+				if (player.position.x - player.targetPosition.x != 0) {
+					player.position.x -= (player.position.x - player.targetPosition.x) * delta * 6;
+				}
+
+				if (player.position.y - player.targetPosition.y != 0) {
+					player.position.y -= (player.position.y - player.targetPosition.y) * delta * 6;
+				}
+
+				if (player.position.z - player.targetPosition.z != 0) {
+					player.position.z -= (player.position.z - player.targetPosition.z) * delta * 6;
+				}
 			});
 
 
@@ -314,15 +420,31 @@ function animate() {
 				}});
 			}
 
+
+
             if(currentPlayer.position.y <= 20 && !lessThan15){
-                lessThan15 = true;
-                console.log('less than : '+coinAmount);
 
-                var player = localStorage.getItem("nickname");
-                var score = coinAmount;
+	            if (!openParachute) {
+		            alert("you are dead!");
+		            started = false;
+	            } else {
+		            lessThan15 = true;
+		            console.log('less than : '+coinAmount);
 
-                $.get("insert_db.php", { player: player, score: score });
-                window.location = "scores.php";
+		            var player = localStorage.getItem("nickname");
+		            var score = coinAmount;
+
+		            endTime = new Date();
+		            var diff = endTime - startTime;
+		            //alert("diff:"+diff+" "+startTime+" "+endTime);
+
+		            $.get("insert_db2.php", { player: player, time_attack: diff }, function(){
+			            window.location = "scores2.php";
+		            });
+
+	            }
+
+
 
             }
 
@@ -330,15 +452,70 @@ function animate() {
 		}
 
 		// Collision Detection
-		var x1 = currentPlayer.position.x - 50;
+		var x1 = currentPlayer.position.x - 70;
 		var x2 = currentPlayer.position.x + 100;
-		var y1 = currentPlayer.position.y - 50;
-		var y2 = currentPlayer.position.y + 50;
-		var z1 = currentPlayer.position.z - 0;
+		var y1 = currentPlayer.position.y - 70;
+		var y2 = currentPlayer.position.y + 70;
+		var z1 = currentPlayer.position.z - 30;
 		var z2 = currentPlayer.position.z + 100;
 
 		// Coin Rotate
 		// removed for time attack mode
+
+		birdsList.forEach(function (c) {
+
+			if (c.position.y - currentPlayer.position.y > 500) {
+				scene.remove(c);
+			} else {
+				// Rotate
+				c.rotation.z = c.rotation.z + 0.07;
+
+
+				// Collision
+				var cx1 = c.position.x - 80;
+				var cx2 = c.position.x + 80;
+				var cy1 = c.position.y - 80;
+				var cy2 = c.position.y + 80;
+				var cz1 = c.position.z - 80;
+				var cz2 = c.position.z + 80;
+
+				if ((cx1 <= x1 && x1 <= cx2) || (cx1 <= x2 && x2 <= cx2)) {
+
+					if ((cy1 <= y1 && y1 <= cy2) || (cy1 <= y2 && y2 <= cy2)) {
+						if ((cz1 <= z1 && z1 <= cz2) || (cz1 <= z2 && z2 <= cz2)) {
+							// Hit a bird!
+							movementSpeed = 50;
+							playSound("bird");
+						}
+					}
+				}
+			}
+
+
+		})
+
+
+		if (!isStereo) {
+			// Update to target camera position
+			if (camera.position.x - targetCameraPosition.x != 0) {
+				camera.position.x += (targetCameraPosition.x - camera.position.x) * delta * 3;
+				camera.position.y += (targetCameraPosition.y - camera.position.y) * delta * 3;
+				camera.position.z += (targetCameraPosition.z - camera.position.z) * delta * 3;
+			}
+
+			// Update to target player rotation
+			if (currentPlayer.rotation.x - targetPlayerRotation.x != 0) {
+				currentPlayer.rotation.x += (targetPlayerRotation.x - currentPlayer.rotation.x) * delta * 2;
+
+			}
+
+			if (currentPlayer.rotation.z - targetPlayerRotation.z != 0) {
+				currentPlayer.rotation.z += (targetPlayerRotation.z - currentPlayer.rotation.z) * delta * 2;
+
+			}
+
+
+		}
 
 		heightJQuery.html(Math.round(currentPlayer.position.y));
 
@@ -347,7 +524,9 @@ function animate() {
 			$("#speed").text(parseInt(speedPerKMH,10) + "");
 
 			if ( !openParachute ){
-				movementSpeed+=accelerationPer10;
+				if (movementSpeed < 500) {
+					movementSpeed+=accelerationPer10;
+				}
 			}
 			else
 			{
@@ -393,5 +572,7 @@ function resize() {
 	camera.updateProjectionMatrix();
 
 	renderer.setSize(width, height);
-	effect.setSize(width, height);
+	if (isStereo) {
+		effect.setSize(width, height);
+	}
 }

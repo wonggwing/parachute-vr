@@ -2,6 +2,10 @@
  * Created by WONG on 6/5/2015.
  */
 
+if (localStorage.getItem("stereo") == null) {
+	localStorage.setItem("stereo", false);
+}
+
 function enable(){
     localStorage.setItem("stereo", true);
     $("#stereo_btn").removeClass("alt");

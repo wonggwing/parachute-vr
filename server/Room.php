@@ -4,6 +4,9 @@ namespace MyApp;
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 
+/**
+ *
+ */
 class Room implements MessageComponentInterface {
 
 	/**
@@ -12,6 +15,7 @@ class Room implements MessageComponentInterface {
 	private $i = 0;
 
 	private $coinsJson = "{}";
+	private $birdsJson = "{}";
 
 	/**
 	 * @var SplObjectStorage
@@ -25,12 +29,12 @@ class Room implements MessageComponentInterface {
 			"coins" => array()
 		);
 
-		for ($i = 20; $i <= 30000; $i += 200) {
-            $list["coins"][] = (object) array(
-                "y" => $i,
-                "x" => rand(-2000, 2000),
-                "z" => rand(-2000, 2000)
-            );
+		for ($i = 20; $i <= 30000; $i += 500) {
+	            $list["coins"][] = (object) array(
+	                "y" => $i,
+	                "x" => rand(-2000, 2000),
+	                "z" => rand(-2000, 2000)
+	            );
 
             $list["coins"][]= (object) array(
                 "y" => $i,
@@ -38,11 +42,6 @@ class Room implements MessageComponentInterface {
                 "z" => rand(-2000, 2000)
             );
 
-            $list["coins"][] = (object) array(
-                "y" => $i,
-                "x" => rand(-3000, 3000),
-                "z" => rand(-3000, 3000)
-            );
         }
 
         $this->coinsJson = json_encode((object) $list);
@@ -51,24 +50,26 @@ class Room implements MessageComponentInterface {
             "birds" => array()
         );
 
-        for ($i = 20; $i <= 30000; $i += 200) {
+        for ($i = 20; $i <= 30000; $i += 300) {
             $bird_list["birds"][] = (object) array(
                 "y" => $i,
                 "x" => rand(-2000, 2000),
                 "z" => rand(-2000, 2000)
             );
 
-            $bird_list["birds"][]= (object) array(
-                "y" => $i,
-                "x" => rand(-2000, 2000),
-                "z" => rand(-2000, 2000)
-            );
+	        $bird_list["birds"][] = (object) array(
+		        "y" => $i,
+		        "x" => rand(-2000, 2000),
+		        "z" => rand(-2000, 2000)
+	        );
 
-            $bird_list["birds"][] = (object) array(
-                "y" => $i,
-                "x" => rand(-3000, 3000),
-                "z" => rand(-3000, 3000)
-            );
+	        $bird_list["birds"][] = (object) array(
+		        "y" => $i,
+		        "x" => rand(-2000, 2000),
+		        "z" => rand(-2000, 2000)
+	        );
+
+
         }
 
         $this->birdsJson = json_encode((object) $bird_list);
@@ -77,6 +78,7 @@ class Room implements MessageComponentInterface {
 	public function onOpen(ConnectionInterface $conn) {
 		$this->players->attach($conn);
 		$conn->id = $this->i++;
+		$conn->open = false;
 		echo "Players: " .  $this->players->count() . "\n";
 	}
 
@@ -92,7 +94,7 @@ class Room implements MessageComponentInterface {
 				$this->updateList();
 
 				$from->send($this->coinsJson);
-                $from->send($this->birdsJson);
+				$from->send($this->birdsJson);
 
 			} else if ($command == "ready") {
 				//echo "$from->name set ready to $value\n";
@@ -104,15 +106,18 @@ class Room implements MessageComponentInterface {
 					"close" => true
 				), $from, true);
 
+			} else if ($command == "open") {
+				$from->open = $value;
+
 			} else if ($command == "start") {
 
-				foreach ($this->players as $p) {
+			/*	foreach ($this->players as $p) {
 
 					if ($p->ready != true) {
 						return;
 					}
 
-				}
+				}*/
 
 				$this->sendToAll(array(
 					"start" => true
@@ -127,7 +132,8 @@ class Room implements MessageComponentInterface {
 						"id" => $from->id,
 						"x" => $value->x,
 						"y" => $value->y,
-						"z" => $value->z
+						"z" => $value->z,
+						"open" =>$from->open
 					)
 				), $from, false);
 			}

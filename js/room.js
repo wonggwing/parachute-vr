@@ -12,25 +12,23 @@ var Room = (function () {
             });
         };
         this.onMessage = function (event) {
-            //console.log(event.data);
             var json = JSON.parse(event.data);
             for (var cmd in json) {
+                console.log(cmd);
                 if (cmd == "list") {
                     $("#player-list").html(json[cmd]);
                 }
                 else if (cmd == "start") {
                     _this.start();
-                    console.log("123");
                 }
                 else if (cmd == "position") {
                     updatePosition(json);
                 }
                 else if (cmd == "coins") {
                     coinsJson = json;
-                    if (isReady) {
-                        initCoinsPosition();
-                        coinsJson = null;
-                    }
+                }
+                else if (cmd == "birds") {
+                    birdsJson = json;
                 }
             }
         };
