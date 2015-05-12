@@ -20,17 +20,15 @@ var Room = (function () {
                 }
                 else if (cmd == "start") {
                     _this.start();
-                    console.log("123");
                 }
                 else if (cmd == "position") {
                     updatePosition(json);
                 }
                 else if (cmd == "coins") {
                     coinsJson = json;
-                    if (isReady) {
-                        initCoinsPosition();
-                        coinsJson = null;
-                    }
+                }
+                else if (cmd == "birds") {
+                    birdsJson = json;
                 }
             }
         };

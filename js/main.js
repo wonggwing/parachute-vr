@@ -12,6 +12,17 @@ var started = false;
 var isReady = false;
 var height = 30000;
 
+var targetCameraPosition = {
+	x:0.37,
+	y:150.67,
+	z: 14.00
+}
+
+var targetPlayerRotation = {
+	x: 0,
+	y: 0,
+	z: 0
+}
 
 /**
  * THREE.StereoEffect
@@ -39,10 +50,13 @@ var coinsJson = null;
 var coinAmount = 0;
 var coinJQuery;
 
+/* Birds */
+var bird;
+var birdsList = [];
+var birdsJson = null;
 
 var cloud;
 
-var counter = 0;
 
 /*
 Jquery elements
@@ -55,17 +69,12 @@ init();
 var ready = function () {
 	isReady = true;
 	currentPlayer.position.y = height;
-	if (coinsJson != null) {
-		initCoinsPosition();
-	}
-
 	animate();
 };
 
 function gameStart() {
-
 	started = true;
-    playSound("bg");
+        playSound("bg");
 }
 
 function updatePosition(json) {
@@ -82,26 +91,50 @@ function updatePosition(json) {
 
 // Generate Coins
 function initCoinsPosition() {
+	var tempJson = coinsJson;
+	coinsJson = null;
 
 	if (coin == undefined) {
 
 	} else {
 		var temp;
-		for (var i = 0; i < coinsJson.coins.length; i++) {
+		for (var i = 0; i < tempJson.coins.length; i++) {
 			temp = coin.clone();
-			temp.position.x = coinsJson.coins[i].x;
-			temp.position.y = coinsJson.coins[i].y;
-			temp.position.z = coinsJson.coins[i].z;
+			temp.position.x = tempJson.coins[i].x;
+			temp.position.y = tempJson.coins[i].y;
+			temp.position.z = tempJson.coins[i].z;
 			scene.add(temp);
 			coinsList.push(temp);
 		}
 	}
+}
 
+function initBirdsPosition() {
+	var tempJson = birdsJson;
+	birdsJson = null;
+
+	if (bird == undefined) {
+
+	} else {
+		var temp;
+		for (var i = 0; i < tempJson.birds.length; i++) {
+			temp = bird.clone();
+			temp.position.x = tempJson.birds[i].x;
+			temp.position.y = tempJson.birds[i].y;
+			temp.position.z = tempJson.birds[i].z;
+			scene.add(temp);
+			birdsList.push(temp);
+		}
+	}
 }
 
 function init() {
 	heightJQuery = $("#height");
 	coinJQuery = $("#coin");
+
+	coinJQuery.click(function () {
+		fullscreen();
+	})
 
 	if (localStorage.getItem("stereo") == "true") {
 		isStereo = true;
@@ -131,12 +164,14 @@ function init() {
 	container.style.backgroundSize = '32px 100%';
 
 	// StereoEffect
-	effect = new THREE.StereoEffect(renderer);
+	if(isStereo) {
+		effect = new THREE.StereoEffect(renderer);
+	}
 
 	var loader = new THREE.ObjectLoader;
 
 	// Load the scene
-	loader.load('json/scene.json?v=' + VERSION, function (obj) {
+	loader.load("json/scene.json?v=3", function (obj) {
 		scene = obj;
 		onSceneLoaded();
 	});
@@ -160,6 +195,8 @@ var onSceneLoaded = function () {
     parachuteModel.visible = false;
 	playerCollision = scene.getObjectByName("c", true);
 	coin = scene.getObjectByName("coin", true)
+	bird = scene.getObjectByName("bird", true)
+
 
 	if (!isStereo) {
 		controls = new THREE.OrbitControls(camera, element);
@@ -247,7 +284,13 @@ var onSceneLoaded = function () {
 
 
 function animate() {
-	counter++;
+	if (coinsJson != null) {
+		initCoinsPosition();
+	}
+
+	if (birdsJson != null) {
+		initBirdsPosition();
+	}
 
 	requestAnimationFrame(animate);
 	resize();
@@ -279,8 +322,11 @@ function animate() {
 				}
 
 				if (keyboard.pressed("A")) {
+					targetPlayerRotation.z = -0.5;
 					if (currentPlayer.position.x <= 4000)
 						currentPlayer.position.x += delta * movementSpeed;
+				} else {
+					targetPlayerRotation.z = 0;
 				}
 
 				if (keyboard.pressed("S")) {
@@ -297,7 +343,20 @@ function animate() {
                     autoOpenParachute = false;
                     parachuteModel.visible = true;
                     openParachute = true;
+	                targetCameraPosition.x =-9.234444120401424;
+	                targetCameraPosition.y = 327.2596578677634;
+	                targetCameraPosition.z =-228.24005012029926;
+
                 }
+
+				if(keyboard.pressed("F") || (autoOpenParachute && currentPlayer.position.y < 1000) ){
+					autoOpenParachute = false;
+					parachuteModel.visible = false;
+					openParachute = false;
+					targetCameraPosition.x = 0.37;
+					targetCameraPosition.y =150.67;
+					targetCameraPosition.z =14.00;
+				}
 
 
 			} else {
@@ -367,11 +426,33 @@ function animate() {
 						}
 
 						coinJQuery.html(++coinAmount);
-                        playSound("coin");
+                                                playSound("coin");
 					}
 				}
 			}
 		})
+
+		if (!isStereo) {
+			// Update to target camera position
+			if (camera.position.x - targetCameraPosition.x != 0) {
+				camera.position.x += (targetCameraPosition.x - camera.position.x) *delta * 3;
+				camera.position.y += (targetCameraPosition.y - camera.position.y) *delta * 3;
+				camera.position.z += (targetCameraPosition.z - camera.position.z) *delta * 3;
+			}
+
+			// Update to target player rotation
+			if (currentPlayer.rotation.x - targetPlayerRotation.x != 0) {
+				currentPlayer.rotation.x += (targetPlayerRotation.x - currentPlayer.rotation.x) *delta * 3;
+
+			}
+
+			if (currentPlayer.rotation.z - targetPlayerRotation.z != 0) {
+				currentPlayer.rotation.z += (targetPlayerRotation.z - currentPlayer.rotation.z) *delta * 3;
+
+			}
+
+
+		}
 
 
 		heightJQuery.html(Math.round(currentPlayer.position.y));
@@ -406,5 +487,8 @@ function resize() {
 	camera.updateProjectionMatrix();
 
 	renderer.setSize(width, height);
-	effect.setSize(width, height);
+
+	if (isStereo) {
+		effect.setSize(width, height);
+	}
 }
