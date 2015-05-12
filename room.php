@@ -78,7 +78,7 @@ define("VERSION", rand(0,99999999));
                 <ul class="horizon_ul">
                     <li class="4u$ 12u$(small)"><a class="button icon fa-plane" href="javascript:room.toggleReady();">Ready</a></li>
                     <li class="4u$ 12u$(small)"><a class="button icon fa-child" href="javascript:room.send({'start' : ''})">Start</a></li>
-                    <li class="4u$ 12u$(small)"><a class="button icon fa-close" href="javascript:room.send({'close' : ''})">Close Room</a></li>
+
                 </ul>
             </div>
         </section>
