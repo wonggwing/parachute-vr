@@ -393,8 +393,25 @@ function animate() {
 
 
 			playerList.forEach(function (player) {
-				player.position.y = player.position.y - (delta * 200);
+				if (!player.openParachute) {
+					player.position.y = player.position.y - (delta * 200);
+				} else {
+					player.position.y = player.position.y - (delta * 50);
+				}
+
+				if (player.position.x - player.targetPosition.x != 0) {
+					player.position.x -= (player.position.x - player.targetPosition.x) * delta * 6;
+				}
+
+				if (player.position.y - player.targetPosition.y != 0) {
+					player.position.y -= (player.position.y - player.targetPosition.y) * delta * 6;
+				}
+
+				if (player.position.z - player.targetPosition.z != 0) {
+					player.position.z -= (player.position.z - player.targetPosition.z) * delta * 6;
+				}
 			});
+
 
 
 			if (currentPlayer.position.y > 15) {
