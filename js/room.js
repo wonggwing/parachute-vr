@@ -12,9 +12,9 @@ var Room = (function () {
             });
         };
         this.onMessage = function (event) {
-            console.log(event.data);
             var json = JSON.parse(event.data);
             for (var cmd in json) {
+                console.log(cmd);
                 if (cmd == "list") {
                     $("#player-list").html(json[cmd]);
                 }

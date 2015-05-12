@@ -73,8 +73,12 @@ var ready = function () {
 };
 
 function gameStart() {
+
+    if(!started){
+        playSound("bg");
+    }
+
 	started = true;
-	playSound("bg");
 }
 
 function updatePosition(json) {
@@ -95,10 +99,6 @@ function updatePosition(json) {
 		y: json.position.y,
 		z: json.position.z
 	};
-
-	//playerList[json.position.id].position.x = json.position.x;
-	//playerList[json.position.id].position.y = json.position.y;
-	//playerList[json.position.id].position.z = json.position.z;
 
 	var para = playerList[json.position.id].getObjectByName("Parachute.obj", true);
 	para.visible = json.position.open;
@@ -253,22 +253,22 @@ var onSceneLoaded = function () {
 
 	});
 
-	var plane = new THREE.Mesh(new THREE.PlaneGeometry(64, 64));
+	var plane = new THREE.Mesh( new THREE.PlaneGeometry( 64, 64 ) );
 
-	for (var i = 3000; i < height; i += 1500) {
+	for ( var i = 3000; i < height;  i+= 1500) {
 
 		plane.position.x = Math.random() * 3000 - 1500;
-		plane.position.z = -Math.random() * Math.random() * 600 - 45;
+		plane.position.z = - Math.random() * Math.random() * 600 - 45;
 		plane.position.y = i;
 		plane.rotation.z = Math.random() * Math.PI;
 		plane.rotation.x = Math.PI / -2;
-		plane.scale.x = plane.scale.y = 100 + Math.random() * Math.random() * 100 + 0.5;
-		THREE.GeometryUtils.merge(geometry, plane);
+		plane.scale.x = plane.scale.y = 100 + Math.random() * Math.random() * 100+ 0.5;
+		THREE.GeometryUtils.merge( geometry, plane );
 
 	}
 
-	cloud = new THREE.Mesh(geometry, material);
-	scene.add(cloud);
+	cloud = new THREE.Mesh( geometry, material );
+	scene.add( cloud );
 
 	if (isStereo) {
 		function setOrientationControls(e) {
@@ -285,8 +285,8 @@ var onSceneLoaded = function () {
 		window.addEventListener('deviceorientation', setOrientationControls, true);
 	} else {
 		camera.position.x = 0.37;
-		camera.position.y = 150.67;
-		camera.position.z = 14.00;
+		camera.position.y =150.67;
+		camera.position.z =14.00;
 		camera.rotation.x = -1.8085;
 		camera.rotation.y = 0.003820;
 		camera.rotation.z = 3.1258;
@@ -323,13 +323,13 @@ function animate() {
 		if (currentPlayer != null) {
 			if (currentPlayer.position.y > 16) {
 
-				if (!openParachute) {
-					currentPlayer.position.y = currentPlayer.position.y - (delta * 200);
-				} else {
-					currentPlayer.position.y = currentPlayer.position.y - (delta * 50);
-				}
+                if(!openParachute) {
+                    currentPlayer.position.y = currentPlayer.position.y - (delta * 200);
+                }else{
+                    currentPlayer.position.y = currentPlayer.position.y - (delta * 50);
+                }
 
-				//console.log(currentPlayer.position.y);
+                //console.log(currentPlayer.position.y);
 
 				targetPlayerRotation.x = 0;
 				targetPlayerRotation.z = 0;
@@ -338,7 +338,7 @@ function animate() {
 					targetPlayerRotation.x = 0.2;
 					if (currentPlayer.position.z <= 4000)
 						currentPlayer.position.z += delta * movementSpeed;
-				} else {
+				}else {
 
 				}
 
@@ -366,113 +366,66 @@ function animate() {
 
 				}
 
-				if (keyboard.pressed("space") || (autoOpenParachute && currentPlayer.position.y < 1000)) {
-					autoOpenParachute = false;
-					parachuteModel.visible = true;
-					openParachute = true;
-					targetCameraPosition.x = -9.234444120401424;
-					targetCameraPosition.y = 327.2596578677634;
-					targetCameraPosition.z = -228.24005012029926;
-					room.send({"open": true});
-				}
+                if(keyboard.pressed("space") || (autoOpenParachute && currentPlayer.position.y < 1000) ){
+                    autoOpenParachute = false;
+                    parachuteModel.visible = true;
+                    openParachute = true;
+	                targetCameraPosition.x =-9.234444120401424;
+	                targetCameraPosition.y = 327.2596578677634;
+	                targetCameraPosition.z =-228.24005012029926;
+			room.send({"open" : true});
+                }
 
-				if (keyboard.pressed("F") || (autoOpenParachute && currentPlayer.position.y < 1000)) {
+				if(keyboard.pressed("F") || (autoOpenParachute && currentPlayer.position.y < 1000) ){
 					autoOpenParachute = false;
 					parachuteModel.visible = false;
 					openParachute = false;
 					targetCameraPosition.x = 0.37;
-					targetCameraPosition.y = 150.67;
-					targetCameraPosition.z = 14.00;
-					room.send({"open": false});
+					targetCameraPosition.y =150.67;
+					targetCameraPosition.z =14.00;
+					room.send({"open" : false});
 				}
 
 
-				if (isStereo) {
-					console.log("oz, ox: " + oz + " " + ox);
-
-
-					/*if (oz >= -40 && oz <= -10) {
-						console.log("forward");
-						targetPlayerRotation.x = 1;
-						if (currentPlayer.position.z <= 4000)
-							currentPlayer.position.z += delta * movementSpeed ;
-					}
-
-					if (oz >= 50 && oz <= 87) {
-						console.log("backward");
-						targetPlayerRotation.x = 1;
-						if (currentPlayer.position.z >= -4000)
-							currentPlayer.position.z -= delta * movementSpeed ;
-					}*/
-
-					if (ox >= 30) {
-
-						targetPlayerRotation.z = 1;
-						if (currentPlayer.position.x >= -4000)
-							currentPlayer.position.x -= delta * movementSpeed ;
-					}
-
-					if (ox <= -30) {
-						targetPlayerRotation.z = -1;
-						if (currentPlayer.position.x <= 4000)
-							currentPlayer.position.x += delta * movementSpeed ;
-					}
-				}
+			} else {
+				//currentPlayer.position.y = 30000;
 			}
 
 
 			playerList.forEach(function (player) {
-				if (!player.openParachute) {
-					player.position.y = player.position.y - (delta * 200);
-				} else {
-					player.position.y = player.position.y - (delta * 50);
-				}
-
-				if (player.position.x - player.targetPosition.x != 0) {
-					player.position.x -= (player.position.x - player.targetPosition.x) * delta * 6;
-				}
-
-				if (player.position.y - player.targetPosition.y != 0) {
-					player.position.y -= (player.position.y - player.targetPosition.y) * delta * 6;
-				}
-
-				if (player.position.z - player.targetPosition.z != 0) {
-					player.position.z -= (player.position.z - player.targetPosition.z) * delta * 6;
-				}
+				player.position.y = player.position.y - (delta * 200);
 			});
 
 
 			if (currentPlayer.position.y > 15) {
-				room.send({
-					"position": {
-						x: currentPlayer.position.x,
-						y: currentPlayer.position.y,
-						z: currentPlayer.position.z
-					}
-				});
+				room.send({"position" : {
+					x: currentPlayer.position.x,
+					y: currentPlayer.position.y,
+					z: currentPlayer.position.z
+				}});
 			}
 
-			if (currentPlayer.position.y <= 20 && !lessThan15) {
+            if(currentPlayer.position.y <= 20 && !lessThan15){
 
-				if (!openParachute) {
-					alert("you are dead!");
-					started = false;
-				} else {
-					lessThan15 = true;
-					console.log('less than : ' + coinAmount);
+	            if (!openParachute) {
+		            alert("you are dead!");
+		            started = false;
+	            } else {
+		            lessThan15 = true;
+		            console.log('less than : '+coinAmount);
 
-					var player = localStorage.getItem("nickname");
-					var score = coinAmount;
+		            var player = localStorage.getItem("nickname");
+		            var score = coinAmount;
 
-					$.get("insert_db.php", {player: player, score: score}, function () {
-						//alert(player+" "+score+" ");
-						window.location = "scores.php";
-					});
+		            $.get("insert_db.php", { player: player, score: score }, function(){
+			            //alert(player+" "+score+" ");
+			            window.location = "scores.php";
+		            });
 
-				}
+	            }
 
 
-			}
+            }
 
 
 		}
@@ -485,9 +438,10 @@ function animate() {
 		var z1 = currentPlayer.position.z - 30;
 		var z2 = currentPlayer.position.z + 100;
 
+
 		coinsList.forEach(function (c) {
 
-			if (c.position.y - currentPlayer.position.y > 500) {
+			if (c.position.y - currentPlayer.position.y  > 500) {
 				scene.remove(c);
 			} else {
 				// Coin Rotate
@@ -523,7 +477,7 @@ function animate() {
 
 		birdsList.forEach(function (c) {
 
-			if (c.position.y - currentPlayer.position.y > 500) {
+			if (c.position.y - currentPlayer.position.y  > 500) {
 				scene.remove(c);
 			} else {
 				// Rotate
@@ -538,10 +492,10 @@ function animate() {
 				var cz1 = c.position.z - 80;
 				var cz2 = c.position.z + 80;
 
-				if ((cx1 <= x1 && x1 <= cx2) || (cx1 <= x2 && x2 <= cx2)) {
+				if ((cx1 <= x1  &&  x1<= cx2) || (cx1 <= x2 && x2 <= cx2)) {
 
-					if ((cy1 <= y1 && y1 <= cy2) || (cy1 <= y2 && y2 <= cy2)) {
-						if ((cz1 <= z1 && z1 <= cz2) || (cz1 <= z2 && z2 <= cz2)) {
+					if ((cy1 <=  y1 && y1 <= cy2) || (cy1 <=  y2 && y2 <= cy2)) {
+						if ((cz1 <=  z1 && z1 <= cz2) || (cz1 <=  z2 && z2 <= cz2)) {
 							// Hit a bird!
 							scene.remove(c);
 							var index = birdsList.indexOf(c);
@@ -550,9 +504,10 @@ function animate() {
 								birdsList.splice(index, 1);
 							}
 
-							if (coinAmount > 0)
-								coinJQuery.html(--coinAmount);
-							playSound("coin");
+							if (coinAmount >0) {
+                                coinJQuery.html(--coinAmount);
+                                playSound("bird");
+                            }
 						}
 					}
 				}
@@ -564,19 +519,19 @@ function animate() {
 		if (!isStereo) {
 			// Update to target camera position
 			if (camera.position.x - targetCameraPosition.x != 0) {
-				camera.position.x += (targetCameraPosition.x - camera.position.x) * delta * 3;
-				camera.position.y += (targetCameraPosition.y - camera.position.y) * delta * 3;
-				camera.position.z += (targetCameraPosition.z - camera.position.z) * delta * 3;
+				camera.position.x += (targetCameraPosition.x - camera.position.x) *delta * 3;
+				camera.position.y += (targetCameraPosition.y - camera.position.y) *delta * 3;
+				camera.position.z += (targetCameraPosition.z - camera.position.z) *delta * 3;
 			}
 
 			// Update to target player rotation
 			if (currentPlayer.rotation.x - targetPlayerRotation.x != 0) {
-				currentPlayer.rotation.x += (targetPlayerRotation.x - currentPlayer.rotation.x) * delta * 2;
+				currentPlayer.rotation.x += (targetPlayerRotation.x - currentPlayer.rotation.x) *delta *2;
 
 			}
 
 			if (currentPlayer.rotation.z - targetPlayerRotation.z != 0) {
-				currentPlayer.rotation.z += (targetPlayerRotation.z - currentPlayer.rotation.z) * delta * 2;
+				currentPlayer.rotation.z += (targetPlayerRotation.z - currentPlayer.rotation.z) *delta *2;
 
 			}
 

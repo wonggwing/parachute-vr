@@ -124,12 +124,15 @@ function initCoinsPosition() {
 
 
 function initBirdsPosition() {
+
+
 	var tempJson = birdsJson;
 	birdsJson = null;
 
 	if (bird == undefined) {
 
 	} else {
+		console.log(birdsJson);
 		var temp;
 		for (var i = 0; i < tempJson.birds.length; i++) {
 			temp = bird.clone();
@@ -199,6 +202,7 @@ var onSceneLoaded = function () {
     parachuteModel.visible = false;
 	playerCollision = scene.getObjectByName("c", true);
 	coin = scene.getObjectByName("coin", true)
+	bird = scene.getObjectByName("bird", true);
 
 	if (!isStereo) {
 		controls = new THREE.OrbitControls(camera, element);
@@ -286,6 +290,7 @@ var onSceneLoaded = function () {
 
 
 function animate() {
+
 	if (birdsJson != null) {
 		initBirdsPosition();
 	}
@@ -306,7 +311,7 @@ function animate() {
 			if (currentPlayer.position.y > 16) {
 
                 if(!openParachute) {
-                    currentPlayer.position.y = currentPlayer.position.y - (delta * 200);
+                    currentPlayer.position.y = currentPlayer.position.y - (delta * movementSpeed);
                 }else{
                     currentPlayer.position.y = currentPlayer.position.y - (delta * 50);
                 }
@@ -321,7 +326,7 @@ function animate() {
 				if (keyboard.pressed("W")) {
 					targetPlayerRotation.x = 0.2;
 					if (currentPlayer.position.z <= 4000)
-						currentPlayer.position.z += delta * movementSpeed;
+						currentPlayer.position.z += delta * 300;
 
 					dragEnabled = true;
 				}
@@ -329,7 +334,7 @@ function animate() {
 				if (keyboard.pressed("A")) {
 					targetPlayerRotation.z = -0.2;
 					if (currentPlayer.position.x <= 4000)
-						currentPlayer.position.x += delta * movementSpeed;
+						currentPlayer.position.x += delta * 300;
 
 					dragEnabled = true;
 				}
@@ -337,7 +342,7 @@ function animate() {
 				if (keyboard.pressed("S")) {
 					targetPlayerRotation.x = -0.2;
 					if (currentPlayer.position.z >= -4000)
-						currentPlayer.position.z -= delta * movementSpeed;
+						currentPlayer.position.z -= delta * 300;
 
 					dragEnabled = true;
 				}
@@ -345,14 +350,14 @@ function animate() {
 				if (keyboard.pressed("D")) {
 					targetPlayerRotation.z = 0.2;
 					if (currentPlayer.position.x >= -4000)
-						currentPlayer.position.x -= delta * movementSpeed;
+						currentPlayer.position.x -= delta * 300;
 
 					dragEnabled = true;
 				}
 
 				if ( timeAttackRunPer10 >= 10 ){
 					if ( dragEnabled ){
-						if ( movementSpeed > 200 ){
+						if ( movementSpeed > 100 ){
 							movementSpeed-=moveDragPer10;
 						}
 					}
@@ -413,20 +418,31 @@ function animate() {
 				}});
 			}
 
+
+
             if(currentPlayer.position.y <= 20 && !lessThan15){
-                lessThan15 = true;
-                console.log('less than : '+coinAmount);
 
-                var player = localStorage.getItem("nickname");
-                var score = coinAmount;
+	            if (!openParachute) {
+		            alert("you are dead!");
+		            started = false;
+	            } else {
+		            lessThan15 = true;
+		            console.log('less than : '+coinAmount);
 
-                endTime = new Date();
-                var diff = endTime - startTime;
-                //alert("diff:"+diff+" "+startTime+" "+endTime);
+		            var player = localStorage.getItem("nickname");
+		            var score = coinAmount;
 
-                $.get("insert_db2.php", { player: player, time_attack: diff }, function(){
-                    window.location = "scores2.php";
-                });
+		            endTime = new Date();
+		            var diff = endTime - startTime;
+		            //alert("diff:"+diff+" "+startTime+" "+endTime);
+
+		            $.get("insert_db2.php", { player: player, time_attack: diff }, function(){
+			            window.location = "scores2.php";
+		            });
+
+	            }
+
+
 
             }
 
@@ -466,15 +482,7 @@ function animate() {
 					if ((cy1 <= y1 && y1 <= cy2) || (cy1 <= y2 && y2 <= cy2)) {
 						if ((cz1 <= z1 && z1 <= cz2) || (cz1 <= z2 && z2 <= cz2)) {
 							// Hit a bird!
-							scene.remove(c);
-							var index = birdsList.indexOf(c);
-
-							if (index > -1) {
-								birdsList.splice(index, 1);
-							}
-
-							if (coinAmount > 0)
-								coinJQuery.html(--coinAmount);
+							movementSpeed = 10;
 							playSound("coin");
 						}
 					}
@@ -514,7 +522,9 @@ function animate() {
 			$("#speed").text(parseInt(speedPerKMH,10) + "");
 
 			if ( !openParachute ){
-				movementSpeed+=accelerationPer10;
+				if (movementSpeed < 500) {
+					movementSpeed+=accelerationPer10;
+				}
 			}
 			else
 			{

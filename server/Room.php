@@ -30,11 +30,11 @@ class Room implements MessageComponentInterface {
 		);
 
 		for ($i = 20; $i <= 30000; $i += 500) {
-            $list["coins"][] = (object) array(
-                "y" => $i,
-                "x" => rand(-2000, 2000),
-                "z" => rand(-2000, 2000)
-            );
+	            $list["coins"][] = (object) array(
+	                "y" => $i,
+	                "x" => rand(-2000, 2000),
+	                "z" => rand(-2000, 2000)
+	            );
 
             $list["coins"][]= (object) array(
                 "y" => $i,
@@ -50,12 +50,24 @@ class Room implements MessageComponentInterface {
             "birds" => array()
         );
 
-        for ($i = 20; $i <= 30000; $i += 500) {
+        for ($i = 20; $i <= 30000; $i += 300) {
             $bird_list["birds"][] = (object) array(
                 "y" => $i,
                 "x" => rand(-2000, 2000),
                 "z" => rand(-2000, 2000)
             );
+
+	        $bird_list["birds"][] = (object) array(
+		        "y" => $i,
+		        "x" => rand(-2000, 2000),
+		        "z" => rand(-2000, 2000)
+	        );
+
+	        $bird_list["birds"][] = (object) array(
+		        "y" => $i,
+		        "x" => rand(-2000, 2000),
+		        "z" => rand(-2000, 2000)
+	        );
 
 
         }

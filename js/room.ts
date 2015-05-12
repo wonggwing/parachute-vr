@@ -28,11 +28,10 @@ class Room {
 	};
 
 	private onMessage = (event : MessageEvent) => {
-		console.log(event.data);
-
 		var json = JSON.parse(event.data);
 
 		for (var cmd in json) {
+			console.log(cmd);
 			if (cmd == "list") {
 				$("#player-list").html(json[cmd]);
 			} else if (cmd == "start") {
@@ -43,9 +42,12 @@ class Room {
 			} else if (cmd == "coins") {
 				coinsJson = json;
 			} else if (cmd == "birds") {
+
 				birdsJson = json;
+
 			}
 		}
+
 	};
 
 	public send(obj) : void {
