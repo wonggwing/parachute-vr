@@ -482,8 +482,8 @@ function animate() {
 					if ((cy1 <= y1 && y1 <= cy2) || (cy1 <= y2 && y2 <= cy2)) {
 						if ((cz1 <= z1 && z1 <= cz2) || (cz1 <= z2 && z2 <= cz2)) {
 							// Hit a bird!
-							movementSpeed = 10;
-							playSound("coin");
+							movementSpeed = 50;
+							playSound("bird");
 						}
 					}
 				}
