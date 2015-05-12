@@ -126,12 +126,14 @@ function initCoinsPosition() {
 function initBirdsPosition() {
 
 
-	var tempJson = birdsJson;
-	birdsJson = null;
 
 	if (bird == undefined) {
 
 	} else {
+
+		var tempJson = birdsJson;
+		birdsJson = null;
+
 		console.log(birdsJson);
 		var temp;
 		for (var i = 0; i < tempJson.birds.length; i++) {

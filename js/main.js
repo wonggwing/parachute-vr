@@ -107,12 +107,14 @@ function updatePosition(json) {
 
 // Generate Coins
 function initCoinsPosition() {
-	var tempJson = coinsJson;
-	coinsJson = null;
+
 
 	if (coin == undefined) {
 
 	} else {
+		var tempJson = coinsJson;
+		coinsJson = null;
+
 		var temp;
 		for (var i = 0; i < tempJson.coins.length; i++) {
 			temp = coin.clone();
@@ -126,12 +128,14 @@ function initCoinsPosition() {
 }
 
 function initBirdsPosition() {
-	var tempJson = birdsJson;
-	birdsJson = null;
 
 	if (bird == undefined) {
 
 	} else {
+
+		var tempJson = birdsJson;
+		birdsJson = null;
+
 		var temp;
 		for (var i = 0; i < tempJson.birds.length; i++) {
 			temp = bird.clone();
