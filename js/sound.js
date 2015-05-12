@@ -9,6 +9,8 @@ function playSound(sound_type){
         playMp3("music/sound/Harp_run.wav");
     }else if(sound_type == "bg"){
         playMp3("music/bg/stars-and-stripes.mp3");
+    }else if(sound_type == "bird"){
+        playMp3("music/sound/Comedy_effect_slide_ricochet_2.wav");
     }
 }
 

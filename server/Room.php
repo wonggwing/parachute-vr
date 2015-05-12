@@ -50,7 +50,7 @@ class Room implements MessageComponentInterface {
             "birds" => array()
         );
 
-        for ($i = 20; $i <= 30000; $i += 1000) {
+        for ($i = 20; $i <= 30000; $i += 500) {
             $bird_list["birds"][] = (object) array(
                 "y" => $i,
                 "x" => rand(-2000, 2000),

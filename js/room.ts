@@ -28,7 +28,7 @@ class Room {
 	};
 
 	private onMessage = (event : MessageEvent) => {
-		//console.log(event.data);
+		console.log(event.data);
 
 		var json = JSON.parse(event.data);
 

@@ -12,7 +12,7 @@ var Room = (function () {
             });
         };
         this.onMessage = function (event) {
-            //console.log(event.data);
+            console.log(event.data);
             var json = JSON.parse(event.data);
             for (var cmd in json) {
                 if (cmd == "list") {
