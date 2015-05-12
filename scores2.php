@@ -2,6 +2,11 @@
 
 <h2><i class="icon small rounded color6 fa-trophy"></i>Score Board</h2>
 <table>
+    <tr>
+        <th>Player</th>
+        <th>Millisecond</th>
+        <th>Time</th>
+    </tr>
     <?php
 
     $db = new SQLite3('time_attack.sqlite');
