@@ -101,11 +101,11 @@ define("VERSION", rand(0,99999999));
                 <!--<div class="12u$">
                     <textarea name="message" id="message" placeholder="Message" rows="6"></textarea>
                 </div>-->
-                <div class="12u$">
+                <!--<div class="12u$">
                     <ul class="actions">
                         <li><input value="Start" class="special big" type="submit"></li>
                     </ul>
-                </div>
+                </div>-->
             </div>
         </form>
     </div>
@@ -155,7 +155,7 @@ define("VERSION", rand(0,99999999));
             <div class="row">
                 <section class="3u 6u(medium) 12u$(xsmall) profile">
                     <img src="images/profile_placeholder.gif" alt="" />
-                    <h4>Director</h4>
+                    <h4>Member</h4>
                     <p>Louis Lam</p>
                 </section>
                 <section class="3u 6u$(medium) 12u$(xsmall) profile">
