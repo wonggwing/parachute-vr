@@ -2,6 +2,8 @@
  * Created by Louis Lam on 3/10/2015.
  */
 
+var startTime, endTime;
+
 var lessThan15 = false;
 var openParachute = false;
 var parachuteModel;
@@ -68,6 +70,7 @@ function gameStart() {
 	started = true;
     playSound("bg");
 	$(".speedometer").css("visibility", "visible");
+    startTime = new Date();
 }
 
 function updatePosition(json) {
@@ -321,8 +324,13 @@ function animate() {
                 var player = localStorage.getItem("nickname");
                 var score = coinAmount;
 
-                $.get("insert_db.php", { player: player, score: score });
-                window.location = "scores.php";
+                endTime = new Date();
+                var diff = endTime - startTime;
+                //alert("diff:"+diff+" "+startTime+" "+endTime);
+
+                $.get("insert_db2.php", { player: player, time_attack: diff }, function(){
+                    window.location = "scores2.php";
+                });
 
             }
 
