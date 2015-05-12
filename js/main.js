@@ -80,12 +80,17 @@ function gameStart() {
 function updatePosition(json) {
 	if (playerList[json.position.id] == undefined) {
 		playerList[json.position.id] = currentPlayer.clone();
+		var para = playerList[json.position.id].getObjectByName("Parachute.obj", true);
+		para.visible = false;
 		scene.add(playerList[json.position.id]);
 	}
 
 	playerList[json.position.id].position.x = json.position.x;
 	playerList[json.position.id].position.y = json.position.y;
 	playerList[json.position.id].position.z = json.position.z;
+
+	var para = playerList[json.position.id].getObjectByName("Parachute.obj", true);
+	para.visible = json.position.open;
 
 }
 
@@ -171,7 +176,7 @@ function init() {
 	var loader = new THREE.ObjectLoader;
 
 	// Load the scene
-	loader.load("json/scene.json?v=3", function (obj) {
+	loader.load("json/scene.json?v=4", function (obj) {
 		scene = obj;
 		onSceneLoaded();
 	});
@@ -239,7 +244,7 @@ var onSceneLoaded = function () {
 
 	var plane = new THREE.Mesh( new THREE.PlaneGeometry( 64, 64 ) );
 
-	for ( var i = 6000; i < height;  i+= 1000) {
+	for ( var i = 3000; i < height;  i+= 1500) {
 
 		plane.position.x = Math.random() * 3000 - 1500;
 		plane.position.z = - Math.random() * Math.random() * 600 - 45;
@@ -315,28 +320,39 @@ function animate() {
 
                 //console.log(currentPlayer.position.y);
 
+				targetPlayerRotation.x = 0;
+				targetPlayerRotation.z = 0;
 
 				if (keyboard.pressed("W")) {
+					targetPlayerRotation.x = 0.2;
 					if (currentPlayer.position.z <= 4000)
 						currentPlayer.position.z += delta * movementSpeed;
+				}else {
+
 				}
 
 				if (keyboard.pressed("A")) {
-					targetPlayerRotation.z = -0.5;
+					targetPlayerRotation.z = -0.2;
 					if (currentPlayer.position.x <= 4000)
 						currentPlayer.position.x += delta * movementSpeed;
 				} else {
-					targetPlayerRotation.z = 0;
+
 				}
 
 				if (keyboard.pressed("S")) {
+					targetPlayerRotation.x = -0.2;
 					if (currentPlayer.position.z >= -4000)
 						currentPlayer.position.z -= delta * movementSpeed;
+				} else {
+
 				}
 
 				if (keyboard.pressed("D")) {
+					targetPlayerRotation.z = 0.2;
 					if (currentPlayer.position.x >= -4000)
 						currentPlayer.position.x -= delta * movementSpeed;
+				} else {
+
 				}
 
                 if(keyboard.pressed("space") || (autoOpenParachute && currentPlayer.position.y < 1000) ){
@@ -346,7 +362,7 @@ function animate() {
 	                targetCameraPosition.x =-9.234444120401424;
 	                targetCameraPosition.y = 327.2596578677634;
 	                targetCameraPosition.z =-228.24005012029926;
-
+			room.send({"open" : true});
                 }
 
 				if(keyboard.pressed("F") || (autoOpenParachute && currentPlayer.position.y < 1000) ){
@@ -356,6 +372,7 @@ function animate() {
 					targetCameraPosition.x = 0.37;
 					targetCameraPosition.y =150.67;
 					targetCameraPosition.z =14.00;
+					room.send({"open" : false});
 				}
 
 
@@ -378,16 +395,24 @@ function animate() {
 			}
 
             if(currentPlayer.position.y <= 20 && !lessThan15){
-                lessThan15 = true;
-                console.log('less than : '+coinAmount);
 
-                var player = localStorage.getItem("nickname");
-                var score = coinAmount;
+	            if (!openParachute) {
+		            alert("you are dead!");
+		            started = false;
+	            } else {
+		            lessThan15 = true;
+		            console.log('less than : '+coinAmount);
 
-                $.get("insert_db.php", { player: player, score: score }, function(){
-                    //alert(player+" "+score+" ");
-                    window.location = "scores.php";
-                });
+		            var player = localStorage.getItem("nickname");
+		            var score = coinAmount;
+
+		            $.get("insert_db.php", { player: player, score: score }, function(){
+			            //alert(player+" "+score+" ");
+			            window.location = "scores.php";
+		            });
+
+	            }
+
 
             }
 
@@ -395,41 +420,88 @@ function animate() {
 		}
 
 		// Collision Detection
-		var x1 = currentPlayer.position.x - 50;
+		var x1 = currentPlayer.position.x - 70;
 		var x2 = currentPlayer.position.x + 100;
-		var y1 = currentPlayer.position.y - 50;
-		var y2 = currentPlayer.position.y + 50;
-		var z1 = currentPlayer.position.z - 0;
+		var y1 = currentPlayer.position.y - 70;
+		var y2 = currentPlayer.position.y + 70;
+		var z1 = currentPlayer.position.z - 30;
 		var z2 = currentPlayer.position.z + 100;
 
-		// Coin Rotate
+
 		coinsList.forEach(function (c) {
-			c.rotation.z = c.rotation.z + 0.07;
 
-			var cx1 = c.position.x - 50;
-			var cx2 = c.position.x + 50;
-			var cy1 = c.position.y - 50;
-			var cy2 = c.position.y + 50;
-			var cz1 = c.position.z - 50;
-			var cz2 = c.position.z + 50;
+			if (c.position.y - currentPlayer.position.y  > 500) {
+				scene.remove(c);
+			} else {
+				// Coin Rotate
+				c.rotation.z = c.rotation.z + 0.07;
 
-			if ((cx1 <= x1  &&  x1<= cx2) || (cx1 <= x2 && x2 <= cx2)) {
+				// Collision
+				var cx1 = c.position.x - 80;
+				var cx2 = c.position.x + 80;
+				var cy1 = c.position.y - 80;
+				var cy2 = c.position.y + 80;
+				var cz1 = c.position.z - 80;
+				var cz2 = c.position.z + 80;
 
-				if ((cy1 <=  y1 && y1 <= cy2) || (cy1 <=  y2 && y2 <= cy2)) {
-					if ((cz1 <=  z1 && z1 <= cz2) || (cz1 <=  z2 && z2 <= cz2)) {
-						 // Hit a coin!
-						scene.remove(c);
-						var index = coinsList.indexOf(c);
+				if ((cx1 <= x1 && x1 <= cx2) || (cx1 <= x2 && x2 <= cx2)) {
 
-						if (index > -1) {
-							coinsList.splice(index, 1);
+					if ((cy1 <= y1 && y1 <= cy2) || (cy1 <= y2 && y2 <= cy2)) {
+						if ((cz1 <= z1 && z1 <= cz2) || (cz1 <= z2 && z2 <= cz2)) {
+							// Hit a coin!
+							scene.remove(c);
+							var index = coinsList.indexOf(c);
+
+							if (index > -1) {
+								coinsList.splice(index, 1);
+							}
+
+							coinJQuery.html(++coinAmount);
+							playSound("coin");
 						}
-
-						coinJQuery.html(++coinAmount);
-                                                playSound("coin");
 					}
 				}
 			}
+		})
+
+		birdsList.forEach(function (c) {
+
+			if (c.position.y - currentPlayer.position.y  > 500) {
+				scene.remove(c);
+			} else {
+				// Rotate
+				c.rotation.z = c.rotation.z + 0.07;
+
+
+				// Collision
+				var cx1 = c.position.x - 80;
+				var cx2 = c.position.x + 80;
+				var cy1 = c.position.y - 80;
+				var cy2 = c.position.y + 80;
+				var cz1 = c.position.z - 80;
+				var cz2 = c.position.z + 80;
+
+				if ((cx1 <= x1  &&  x1<= cx2) || (cx1 <= x2 && x2 <= cx2)) {
+
+					if ((cy1 <=  y1 && y1 <= cy2) || (cy1 <=  y2 && y2 <= cy2)) {
+						if ((cz1 <=  z1 && z1 <= cz2) || (cz1 <=  z2 && z2 <= cz2)) {
+							// Hit a bird!
+							scene.remove(c);
+							var index = birdsList.indexOf(c);
+
+							if (index > -1) {
+								birdsList.splice(index, 1);
+							}
+
+							if (coinAmount >0)
+								coinJQuery.html(--coinAmount);
+							playSound("coin");
+						}
+					}
+				}
+			}
+
+
 		})
 
 		if (!isStereo) {
@@ -442,12 +514,12 @@ function animate() {
 
 			// Update to target player rotation
 			if (currentPlayer.rotation.x - targetPlayerRotation.x != 0) {
-				currentPlayer.rotation.x += (targetPlayerRotation.x - currentPlayer.rotation.x) *delta * 3;
+				currentPlayer.rotation.x += (targetPlayerRotation.x - currentPlayer.rotation.x) *delta *2;
 
 			}
 
 			if (currentPlayer.rotation.z - targetPlayerRotation.z != 0) {
-				currentPlayer.rotation.z += (targetPlayerRotation.z - currentPlayer.rotation.z) *delta * 3;
+				currentPlayer.rotation.z += (targetPlayerRotation.z - currentPlayer.rotation.z) *delta *2;
 
 			}
 

@@ -50,14 +50,8 @@ class Room implements MessageComponentInterface {
             "birds" => array()
         );
 
-        for ($i = 20; $i <= 30000; $i += 800) {
+        for ($i = 20; $i <= 30000; $i += 1000) {
             $bird_list["birds"][] = (object) array(
-                "y" => $i,
-                "x" => rand(-2000, 2000),
-                "z" => rand(-2000, 2000)
-            );
-
-            $bird_list["birds"][]= (object) array(
                 "y" => $i,
                 "x" => rand(-2000, 2000),
                 "z" => rand(-2000, 2000)
@@ -72,6 +66,7 @@ class Room implements MessageComponentInterface {
 	public function onOpen(ConnectionInterface $conn) {
 		$this->players->attach($conn);
 		$conn->id = $this->i++;
+		$conn->open = false;
 		echo "Players: " .  $this->players->count() . "\n";
 	}
 
@@ -99,6 +94,9 @@ class Room implements MessageComponentInterface {
 					"close" => true
 				), $from, true);
 
+			} else if ($command == "open") {
+				$from->open = $value;
+
 			} else if ($command == "start") {
 
 			/*	foreach ($this->players as $p) {
@@ -122,7 +120,8 @@ class Room implements MessageComponentInterface {
 						"id" => $from->id,
 						"x" => $value->x,
 						"y" => $value->y,
-						"z" => $value->z
+						"z" => $value->z,
+						"open" =>$from->open
 					)
 				), $from, false);
 			}
