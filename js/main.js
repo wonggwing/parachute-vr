@@ -73,8 +73,12 @@ var ready = function () {
 };
 
 function gameStart() {
-	started = true;
+
+    if(!started){
         playSound("bg");
+    }
+
+	started = true;
 }
 
 function updatePosition(json) {
@@ -493,9 +497,10 @@ function animate() {
 								birdsList.splice(index, 1);
 							}
 
-							if (coinAmount >0)
-								coinJQuery.html(--coinAmount);
-							playSound("coin");
+							if (coinAmount >0) {
+                                coinJQuery.html(--coinAmount);
+                                playSound("bird");
+                            }
 						}
 					}
 				}
